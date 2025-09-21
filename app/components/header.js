@@ -41,8 +41,8 @@ export default function Header() {
                   個人資料編輯
                 </Link>
                 <Link 
-                  href="/manage-codes"
-                  className={pathname === '/manage-codes' ? 'active' : ''}
+                  href="/manageCode"
+                  className={pathname === '/manageCode' ? 'active' : ''}
                 >
                   管理我的邀請碼
                 </Link>
@@ -50,8 +50,8 @@ export default function Header() {
             </li>
             <li>
               <Link 
-                href="/about"
-                className={pathname === '/about' ? 'active' : ''}
+                href="/aboutUs"
+                className={pathname === '/aboutUs' ? 'active' : ''}
               >
                 關於我們
               </Link>
@@ -59,10 +59,10 @@ export default function Header() {
           </ul>
           
           <div className="auth-buttons">
-            <Link href="/login" className="btn-login">
+            <Link href="/auth/login" className="btn-login">
               登入
             </Link>
-            <Link href="/register" className="btn-register">
+            <Link href="/auth/signup" className="btn-register">
               註冊
             </Link>
           </div>
