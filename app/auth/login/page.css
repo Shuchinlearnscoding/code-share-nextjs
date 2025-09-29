@@ -1,0 +1,705 @@
+/* styles/Login.module.css - 登入頁面完整樣式 */
+
+.loginContainer {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.loginContainer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="hexagons" width="28" height="49" patternUnits="userSpaceOnUse" patternTransform="scale(0.5)"><polygon points="14,1 26,7 26,21 14,27 2,21 2,7" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23hexagons)"/></svg>');
+    opacity: 0.3;
+}
+
+.welcomeSection {
+    text-align: center;
+    padding: 4rem 1.25rem 3rem;
+    color: white;
+    position: relative;
+    z-index: 1;
+}
+
+.welcomeTitle {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(45deg, #ffffff, #f0f8ff);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: glow 3s ease-in-out infinite;
+}
+
+@keyframes glow {
+    0%, 100% { 
+        filter: brightness(1);
+        transform: scale(1);
+    }
+    50% { 
+        filter: brightness(1.1);
+        transform: scale(1.02);
+    }
+}
+
+.welcomeSubtitle {
+    font-size: 1.2rem;
+    opacity: 0.95;
+    line-height: 1.6;
+    max-width: 500px;
+    margin: 0 auto;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.loginCard {
+    background: rgba(255, 255, 255, 0.97);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 3rem;
+    margin: 0 auto 2rem;
+    box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.15),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+    width: 100%;
+    max-width: 480px;
+    position: relative;
+    z-index: 2;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.loginCard::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
+    border-radius: 24px 24px 0 0;
+    background-size: 200% 100%;
+    animation: loginGradient 3s ease infinite;
+}
+
+@keyframes loginGradient {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+.authHeader {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.authTitle {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+    position: relative;
+}
+
+.authTitle::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    border-radius: 2px;
+}
+
+.authSubtitle {
+    color: #718096;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-top: 1rem;
+}
+
+/* 社交登入區域 */
+.socialLogin {
+    margin-bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+}
+
+.socialButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.875rem;
+    padding: 1rem 1.5rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 16px;
+    background: white;
+    color: #4a5568;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    font-size: 0.95rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.socialButton::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transition: left 0.5s;
+}
+
+.socialButton:hover::before {
+    left: 100%;
+}
+
+.socialButton:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+    border-color: currentColor;
+}
+
+.socialButton:active {
+    transform: translateY(-1px);
+}
+
+.socialButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.socialButton.google {
+    border-color: #ea4335;
+    color: #ea4335;
+}
+
+.socialButton.google:hover:not(:disabled) {
+    background: #ea4335;
+    color: white;
+    box-shadow: 0 12px 32px rgba(234, 67, 53, 0.3);
+}
+
+.socialButton.facebook {
+    border-color: #1877f2;
+    color: #1877f2;
+}
+
+.socialButton.facebook:hover:not(:disabled) {
+    background: #1877f2;
+    color: white;
+    box-shadow: 0 12px 32px rgba(24, 119, 242, 0.3);
+}
+
+.socialButton.line {
+    border-color: #00b900;
+    color: #00b900;
+}
+
+.socialButton.line:hover:not(:disabled) {
+    background: #00b900;
+    color: white;
+    box-shadow: 0 12px 32px rgba(0, 185, 0, 0.3);
+}
+
+.socialIcon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+}
+
+/* 分隔線 */
+.divider {
+    text-align: center;
+    margin: 2.5rem 0;
+    position: relative;
+    color: #a0aec0;
+    font-weight: 500;
+}
+
+.divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #e2e8f0, transparent);
+}
+
+.divider span {
+    background: rgba(255, 255, 255, 0.97);
+    padding: 0 1.5rem;
+    font-size: 0.875rem;
+    backdrop-filter: blur(10px);
+}
+
+/* 表單樣式 */
+.authForm {
+    margin-bottom: 2rem;
+}
+
+.formGroup {
+    margin-bottom: 1.75rem;
+    position: relative;
+}
+
+.formLabel {
+    display: block;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+    transition: color 0.3s ease;
+    letter-spacing: 0.025em;
+}
+
+.formInput {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 16px;
+    font-size: 1rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(248, 250, 252, 0.8);
+    backdrop-filter: blur(10px);
+    box-sizing: border-box;
+    font-weight: 500;
+}
+
+.formInput::placeholder {
+    color: #a0aec0;
+    font-weight: 400;
+}
+
+.formInput:focus {
+    outline: none;
+    border-color: #667eea;
+    background: white;
+    box-shadow: 
+        0 0 0 4px rgba(102, 126, 234, 0.1),
+        0 4px 12px rgba(102, 126, 234, 0.15);
+    transform: translateY(-1px);
+}
+
+.formInput:focus + .formLabel {
+    color: #667eea;
+}
+
+.formInput.error {
+    border-color: #e53e3e;
+    background: rgba(254, 245, 245, 0.8);
+    box-shadow: 0 0 0 4px rgba(229, 62, 62, 0.1);
+}
+
+.formInput.success {
+    border-color: #38a169;
+    background: rgba(240, 253, 244, 0.8);
+    box-shadow: 0 0 0 4px rgba(56, 161, 105, 0.1);
+}
+
+.passwordInputGroup {
+    position: relative;
+}
+
+.passwordToggle {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #718096;
+    font-size: 1.2rem;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.passwordToggle:hover {
+    color: #4a5568;
+    background: rgba(226, 232, 240, 0.5);
+}
+
+.formError {
+    font-size: 0.8rem;
+    color: #e53e3e;
+    margin-top: 0.5rem;
+    font-weight: 500;
+    animation: slideIn 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.formError::before {
+    content: '⚠️';
+    font-size: 0.75rem;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 表單選項 */
+.formOptions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 1.5rem 0;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.checkboxGroup {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.checkboxInput {
+    width: 20px;
+    height: 20px;
+    accent-color: #667eea;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.checkboxLabel {
+    font-size: 0.9rem;
+    color: #4a5568;
+    cursor: pointer;
+    user-select: none;
+    font-weight: 500;
+}
+
+.forgotPassword {
+    font-size: 0.9rem;
+}
+
+.linkButton {
+    background: none;
+    border: none;
+    color: #667eea;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: inherit;
+    font-weight: 600;
+    transition: color 0.3s ease;
+    padding: 0.25rem 0;
+    border-radius: 4px;
+}
+
+.linkButton:hover {
+    color: #5a67d8;
+    text-decoration: underline;
+}
+
+/* 主要按鈕 */
+.authButton {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 16px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-bottom: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    letter-spacing: 0.025em;
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+}
+
+.authButton::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.6s;
+}
+
+.authButton:hover::before {
+    left: 100%;
+}
+
+.authButton:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.4);
+}
+
+.authButton:active {
+    transform: translateY(0);
+}
+
+.authButton:disabled {
+    background: linear-gradient(135deg, #cbd5e0 0%, #a0aec0 100%);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.authButton:disabled::before {
+    display: none;
+}
+
+.loadingSpinner {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top: 2px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 頁腳 */
+.authFooter {
+    text-align: center;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(226, 232, 240, 0.6);
+}
+
+.authFooter p {
+    color: #718096;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.authLink {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+}
+
+.authLink:hover {
+    color: #5a67d8;
+    background: rgba(102, 126, 234, 0.1);
+    text-decoration: none;
+}
+
+.demoLink {
+    color: #805ad5;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.85rem;
+    opacity: 0.8;
+    transition: all 0.3s ease;
+}
+
+.demoLink:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
+
+/* 警告訊息 */
+.alert {
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+    text-align: center;
+    animation: alertIn 0.5s ease;
+    border: 1px solid;
+    position: relative;
+    overflow: hidden;
+}
+
+.alert::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: currentColor;
+}
+
+.alert.success {
+    background: rgba(72, 187, 120, 0.1);
+    color: #2f855a;
+    border-color: rgba(72, 187, 120, 0.3);
+}
+
+.alert.error {
+    background: rgba(229, 62, 62, 0.1);
+    color: #c53030;
+    border-color: rgba(229, 62, 62, 0.3);
+}
+
+.alert.info {
+    background: rgba(102, 126, 234, 0.1);
+    color: #3182ce;
+    border-color: rgba(102, 126, 234, 0.3);
+}
+
+.alert.warning {
+    background: rgba(237, 137, 54, 0.1);
+    color: #dd6b20;
+    border-color: rgba(237, 137, 54, 0.3);
+}
+
+@keyframes alertIn {
+    from {
+        opacity: 0;
+        transform: translateY(-16px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* 動畫效果 */
+.fadeIn {
+    animation: fadeIn 0.6s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.shake {
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    75% { transform: translateX(8px); }
+}
+
+/* 成功狀態 */
+.successIcon {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #28a745;
+    color: white;
+    text-align: center;
+    line-height: 20px;
+    font-size: 12px;
+    margin-right: 8px;
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+    .loginContainer {
+        padding: 1rem 0.75rem;
+    }
+    
+    .loginCard {
+        padding: 2rem 1.5rem;
+        margin: 0 0.5rem 1rem;
+        max-width: none;
+    }
+    
+    .authTitle {
+        font-size: 1.875rem;
+    }
+    
+    .welcomeTitle {
+        font-size: 2.25rem;
+    }
+    
+    .welcomeSection {
+        padding: 3rem 1rem 2rem;
+    }
+    
+    .formOptions {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+    
+    .socialButton {
+        padding: 0.875rem 1.25rem;
+        font-size: 0.9rem;
+    }
+    
+    .authButton {
+        padding: 0.875rem 1.25rem;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .loginCard {
+        padding: 1.5rem 1.25rem;
+        margin: 0 0.25rem 0.5rem;
+        border-radius: 20px;
+    }
+    
+    .authTitle {
+        font-size: 1.625rem;
+    }
+    
+    .welcomeTitle {
+        font-size: 2rem;
+    }
+    
+    .welcomeSection {
+        padding: 2rem 0.75rem 1.5rem;
+    }
+    
+    .formInput {
+        font-size: 16px; /* 防止 iOS 縮放 */
+    }
+    
+    .socialIcon {
+        font-size: 1.2rem;
+    }
+}

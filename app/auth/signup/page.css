@@ -1,0 +1,729 @@
+/* styles/Register.module.css - 註冊頁面完整樣式 */
+
+.registerContainer {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.registerContainer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1.5" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23dots)"/></svg>');
+    opacity: 0.4;
+}
+
+.welcomeSection {
+    text-align: center;
+    padding: 3rem 1.25rem 2.5rem;
+    color: white;
+    position: relative;
+    z-index: 1;
+}
+
+.welcomeTitle {
+    font-size: 2.75rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(45deg, #ffffff, #f0fff4);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+}
+
+.welcomeSubtitle {
+    font-size: 1.1rem;
+    opacity: 0.95;
+    line-height: 1.6;
+    max-width: 500px;
+    margin: 0 auto;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.registerCard {
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 2.5rem;
+    margin: 0 auto 2rem;
+    box-shadow: 
+        0 25px 50px rgba(0, 0, 0, 0.15),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+    width: 100%;
+    max-width: 520px;
+    position: relative;
+    z-index: 2;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.registerCard::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #28a745, #20c997, #28a745);
+    border-radius: 24px 24px 0 0;
+    background-size: 200% 100%;
+    animation: registerGradient 3s ease infinite;
+}
+
+@keyframes registerGradient {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+.authHeader {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.authTitle {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+    position: relative;
+}
+
+.authTitle::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(45deg, #28a745, #20c997);
+    border-radius: 2px;
+}
+
+.authSubtitle {
+    color: #718096;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-top: 1rem;
+}
+
+/* 社交註冊區域 */
+.socialLogin {
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.socialButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1.25rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 14px;
+    background: white;
+    color: #4a5568;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.socialButton::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transition: left 0.5s;
+}
+
+.socialButton:hover::before {
+    left: 100%;
+}
+
+.socialButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    border-color: currentColor;
+}
+
+.socialButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.socialButton.google {
+    border-color: #ea4335;
+    color: #ea4335;
+}
+
+.socialButton.google:hover:not(:disabled) {
+    background: #ea4335;
+    color: white;
+    box-shadow: 0 8px 25px rgba(234, 67, 53, 0.3);
+}
+
+.socialButton.facebook {
+    border-color: #1877f2;
+    color: #1877f2;
+}
+
+.socialButton.facebook:hover:not(:disabled) {
+    background: #1877f2;
+    color: white;
+    box-shadow: 0 8px 25px rgba(24, 119, 242, 0.3);
+}
+
+.socialButton.line {
+    border-color: #00b900;
+    color: #00b900;
+}
+
+.socialButton.line:hover:not(:disabled) {
+    background: #00b900;
+    color: white;
+    box-shadow: 0 8px 25px rgba(0, 185, 0, 0.3);
+}
+
+.socialIcon {
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+/* 分隔線 */
+.divider {
+    text-align: center;
+    margin: 1.5rem 0;
+    position: relative;
+    color: #a0aec0;
+    font-weight: 500;
+}
+
+.divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #e2e8f0, transparent);
+}
+
+.divider span {
+    background: rgba(255, 255, 255, 0.98);
+    padding: 0 1.25rem;
+    font-size: 0.8rem;
+    backdrop-filter: blur(10px);
+}
+
+/* 表單樣式 */
+.authForm {
+    margin-bottom: 1.5rem;
+}
+
+.formGroup {
+    margin-bottom: 1.25rem;
+    position: relative;
+}
+
+.formLabel {
+    display: block;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    transition: color 0.3s ease;
+    letter-spacing: 0.025em;
+}
+
+.formInput {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(248, 250, 252, 0.8);
+    backdrop-filter: blur(10px);
+    box-sizing: border-box;
+    font-weight: 500;
+}
+
+.formInput::placeholder {
+    color: #a0aec0;
+    font-weight: 400;
+}
+
+.formInput:focus {
+    outline: none;
+    border-color: #28a745;
+    background: white;
+    box-shadow: 
+        0 0 0 3px rgba(40, 167, 69, 0.1),
+        0 4px 12px rgba(40, 167, 69, 0.15);
+    transform: translateY(-1px);
+}
+
+.formInput.error {
+    border-color: #e53e3e;
+    background: rgba(254, 245, 245, 0.8);
+    box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.1);
+}
+
+.formInput.success {
+    border-color: #38a169;
+    background: rgba(240, 253, 244, 0.8);
+    box-shadow: 0 0 0 3px rgba(56, 161, 105, 0.1);
+}
+
+.passwordInputGroup {
+    position: relative;
+}
+
+.passwordToggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #718096;
+    font-size: 1.1rem;
+    padding: 0.5rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.passwordToggle:hover {
+    color: #4a5568;
+    background: rgba(226, 232, 240, 0.5);
+}
+
+.formHelp {
+    font-size: 0.75rem;
+    color: #718096;
+    margin-top: 0.25rem;
+    line-height: 1.4;
+}
+
+.formError {
+    font-size: 0.75rem;
+    color: #e53e3e;
+    margin-top: 0.5rem;
+    font-weight: 500;
+    animation: slideIn 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.formError::before {
+    content: '⚠️';
+    font-size: 0.7rem;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 密碼強度指示器 */
+.passwordStrength {
+    margin-top: 0.75rem;
+}
+
+.strengthBar {
+    height: 6px;
+    background: #e2e8f0;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+    position: relative;
+}
+
+.strengthFill {
+    height: 100%;
+    width: 0%;
+    transition: all 0.3s ease;
+    border-radius: 3px;
+    position: relative;
+}
+
+.strengthFill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: shine 2s infinite;
+}
+
+@keyframes shine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.strengthWeak { 
+    background: linear-gradient(45deg, #e53e3e, #fc8181);
+    width: 25%; 
+}
+
+.strengthFair { 
+    background: linear-gradient(45deg, #ed8936, #f6ad55);
+    width: 50%; 
+}
+
+.strengthGood { 
+    background: linear-gradient(45deg, #38a169, #68d391);
+    width: 75%; 
+}
+
+.strengthStrong { 
+    background: linear-gradient(45deg, #28a745, #48bb78);
+    width: 100%; 
+}
+
+.strengthText {
+    font-size: 0.75rem;
+    color: #718096;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.strengthRequirements {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.25rem;
+}
+
+.requirementItem {
+    font-size: 0.6875rem;
+    color: #a0aec0;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    transition: color 0.3s ease;
+}
+
+.requirementItem.met {
+    color: #38a169;
+}
+
+.checkIcon {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.5rem;
+    transition: all 0.3s ease;
+    font-weight: bold;
+}
+
+.requirementItem.met .checkIcon {
+    background: #38a169;
+    color: white;
+}
+
+/* 複選框組 */
+.checkboxGroup {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin: 1rem 0;
+}
+
+.checkboxGroup.error .checkboxLabel {
+    color: #e53e3e;
+}
+
+.checkboxInput {
+    width: 18px;
+    height: 18px;
+    accent-color: #28a745;
+    margin-top: 0.125rem;
+    cursor: pointer;
+}
+
+.checkboxLabel {
+    font-size: 0.85rem;
+    color: #4a5568;
+    line-height: 1.5;
+    cursor: pointer;
+    user-select: none;
+    font-weight: 500;
+}
+
+/* 主要按鈕 */
+.authButton {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    border: none;
+    border-radius: 14px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-bottom: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    letter-spacing: 0.025em;
+    box-shadow: 0 4px 16px rgba(40, 167, 69, 0.3);
+}
+
+.authButton::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.6s;
+}
+
+.authButton:hover::before {
+    left: 100%;
+}
+
+.authButton:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(40, 167, 69, 0.4);
+}
+
+.authButton:disabled {
+    background: linear-gradient(135deg, #cbd5e0 0%, #a0aec0 100%);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.loadingSpinner {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top: 2px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 頁腳 */
+.authFooter {
+    text-align: center;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(226, 232, 240, 0.6);
+}
+
+.authFooter p {
+    color: #718096;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.authLink {
+    color: #28a745;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+}
+
+.authLink:hover {
+    color: #22863a;
+    background: rgba(40, 167, 69, 0.1);
+    text-decoration: none;
+}
+
+/* 警告訊息 */
+.alert {
+    padding: 0.875rem 1rem;
+    border-radius: 10px;
+    margin-bottom: 1.25rem;
+    font-weight: 500;
+    text-align: center;
+    animation: alertIn 0.5s ease;
+    border: 1px solid;
+    position: relative;
+    overflow: hidden;
+    font-size: 0.9rem;
+}
+
+.alert::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: currentColor;
+}
+
+.alert.success {
+    background: rgba(72, 187, 120, 0.1);
+    color: #2f855a;
+    border-color: rgba(72, 187, 120, 0.3);
+}
+
+.alert.error {
+    background: rgba(229, 62, 62, 0.1);
+    color: #c53030;
+    border-color: rgba(229, 62, 62, 0.3);
+}
+
+.alert.info {
+    background: rgba(40, 167, 69, 0.1);
+    color: #2d7738;
+    border-color: rgba(40, 167, 69, 0.3);
+}
+
+@keyframes alertIn {
+    from {
+        opacity: 0;
+        transform: translateY(-16px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* 動畫效果 */
+.fadeIn {
+    animation: fadeIn 0.6s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.shake {
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    75% { transform: translateX(8px); }
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+    .registerContainer {
+        padding: 1rem 0.5rem;
+    }
+    
+    .registerCard {
+        padding: 2rem 1.5rem;
+        margin: 0 0.5rem 1rem;
+        max-width: none;
+    }
+    
+    .authTitle {
+        font-size: 1.75rem;
+    }
+    
+    .welcomeTitle {
+        font-size: 2.25rem;
+    }
+    
+    .welcomeSection {
+        padding: 2.5rem 1rem 2rem;
+    }
+    
+    .strengthRequirements {
+        grid-template-columns: 1fr;
+        gap: 0.125rem;
+    }
+    
+    .socialButton {
+        padding: 0.75rem 1rem;
+        font-size: 0.85rem;
+    }
+    
+    .authButton {
+        padding: 0.875rem 1.25rem;
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .registerCard {
+        padding: 1.5rem 1.25rem;
+        margin: 0 0.25rem 0.5rem;
+        border-radius: 20px;
+    }
+    
+    .authTitle {
+        font-size: 1.5rem;
+    }
+    
+    .welcomeTitle {
+        font-size: 2rem;
+    }
+    
+    .welcomeSection {
+        padding: 2rem 0.75rem 1.5rem;
+    }
+    
+    .formInput {
+        font-size: 16px; /* 防止 iOS 縮放 */
+    }
+}
