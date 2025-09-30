@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import Head from 'next/head';
 import Link from 'next/link';
 import { signIn, getSession } from 'next-auth/react';
-import styles from './app/auth/signup/page.css';
+import styles from './Register.module.css';
 
 export default function RegisterPage() {
     const router = useRouter();

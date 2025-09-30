@@ -6,7 +6,10 @@ import { useRouter } from 'next/navigation';
 import Head from 'next/head';
 import Link from 'next/link';
 import { signIn, getSession } from 'next-auth/react';
-import styles from './app/auth/login/page.css';
+import styles from './Login.module.css'; // './page.css'
+
+
+
 
 export default function LoginPage() {
     const router = useRouter();

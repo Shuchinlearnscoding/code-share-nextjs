@@ -1,5 +1,15 @@
 /* 會員資料編輯 CSS - profileeditpage.css */
+/* css selector
+- select by .  <= all
+- select by tag_name  <= html tag
+h1 {
+    color: red;
+}
+- select by
 
+
+
+*/
 .profile-container {
     background: white;
     border-radius: 20px;
