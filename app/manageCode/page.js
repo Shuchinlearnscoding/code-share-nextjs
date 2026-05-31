@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { getAllReports, reactivateCode } from '@/lib/reportStore';
 import './page.css';
 
 export default function ManageCodePage() {
@@ -20,15 +21,19 @@ export default function ManageCodePage() {
         sortBy: 'created_desc'
     });
 
-    // Mock data for invite codes
-    const [codes] = useState([
+    const [reportRecords, setReportRecords] = useState({});
+
+    useEffect(() => {
+        setReportRecords(getAllReports());
+    }, []);
+
+    const MOCK_CODES = [
         {
             id: 'fp123abc',
             platform: 'Foodpanda',
             code: 'FP123ABC',
             status: 'active',
             usageCount: 45,
-            reportCount: 0,
             daysCreated: 7,
             lastUsed: '今天'
         },
@@ -38,7 +43,6 @@ export default function ManageCodePage() {
             code: 'UB789XYZ',
             status: 'active',
             usageCount: 32,
-            reportCount: 1,
             daysCreated: 12,
             lastUsed: '2天前'
         },
@@ -46,9 +50,8 @@ export default function ManageCodePage() {
             id: 'lp2024a1',
             platform: 'Line Pay',
             code: 'LP2024A1',
-            status: 'reported',
+            status: 'active',
             usageCount: 8,
-            reportCount: 2,
             daysCreated: 5,
             lastUsed: '4天前'
         },
@@ -58,7 +61,6 @@ export default function ManageCodePage() {
             code: 'JK001122',
             status: 'inactive',
             usageCount: 23,
-            reportCount: 0,
             daysCreated: 20,
             lastUsed: '10天前'
         },
@@ -68,11 +70,28 @@ export default function ManageCodePage() {
             code: 'EC24AA11',
             status: 'active',
             usageCount: 19,
-            reportCount: 0,
             daysCreated: 15,
             lastUsed: '1天前'
         }
-    ]);
+    ];
+
+    const codes = MOCK_CODES.map((c) => {
+        const reports = reportRecords[c.id] || [];
+        const reportCount = reports.length;
+        const suspended = reportCount >= 5;
+        return {
+            ...c,
+            reportCount,
+            reports,
+            status: suspended ? 'suspended' : c.status,
+        };
+    });
+
+    const [expandedReports, setExpandedReports] = useState({});
+
+    const toggleReports = (codeId) => {
+        setExpandedReports((prev) => ({ ...prev, [codeId]: !prev[codeId] }));
+    };
 
     // Handle form input changes
     const handleInputChange = (e) => {
@@ -246,12 +265,19 @@ export default function ManageCodePage() {
         };
     }, []);
 
+    const confirmStillValid = (codeId) => {
+        reactivateCode(codeId);
+        setReportRecords(getAllReports());
+        showAlert('邀請碼已重新上架！', 'success');
+    };
+
     // Get status class
     const getStatusClass = (status) => {
         switch (status) {
             case 'active': return 'status-active';
             case 'inactive': return 'status-inactive';
             case 'reported': return 'status-reported';
+            case 'suspended': return 'status-reported';
             default: return '';
         }
     };
@@ -262,6 +288,7 @@ export default function ManageCodePage() {
             case 'active': return '使用中';
             case 'inactive': return '已下架';
             case 'reported': return '被檢舉';
+            case 'suspended': return '⚠️ 暫時下架';
             default: return '';
         }
     };
@@ -280,24 +307,24 @@ export default function ManageCodePage() {
             <div className="stats-summary">
                 <div className="stats-grid">
                     <div className="stat-item">
-                        <div className="stat-number">5</div>
+                        <div className="stat-number">{codes.length}</div>
                         <div className="stat-label">總邀請碼數</div>
                     </div>
                     <div className="stat-item">
-                        <div className="stat-number">3</div>
+                        <div className="stat-number">{codes.filter(c => c.status === 'active').length}</div>
                         <div className="stat-label">使用中</div>
                     </div>
                     <div className="stat-item">
-                        <div className="stat-number">127</div>
+                        <div className="stat-number">{codes.reduce((sum, c) => sum + c.usageCount, 0)}</div>
                         <div className="stat-label">總使用次數</div>
                     </div>
                     <div className="stat-item">
-                        <div className="stat-number">2</div>
-                        <div className="stat-label">被檢舉</div>
+                        <div className="stat-number">{codes.filter(c => c.reportCount > 0).length}</div>
+                        <div className="stat-label">有回報紀錄</div>
                     </div>
                     <div className="stat-item">
-                        <div className="stat-number">3</div>
-                        <div className="stat-label">涵蓋平台</div>
+                        <div className="stat-number">{codes.filter(c => c.status === 'suspended').length}</div>
+                        <div className="stat-label">暫時下架</div>
                     </div>
                 </div>
             </div>
@@ -309,7 +336,7 @@ export default function ManageCodePage() {
                     <div className="warning-title">重要提醒</div>
                     <div className="warning-text">
                         • 每個平台最多只能新增 2 組邀請碼<br />
-                        • 邀請碼被檢舉 3 次將自動下架<br />
+                        • 邀請碼累積 5 人回報後將暫時下架，請確認後重新上架<br />
                         • 設置越多不同平台的邀請碼，被推薦的機率越高
                     </div>
                 </div>
@@ -366,24 +393,32 @@ export default function ManageCodePage() {
             {/* 邀請碼列表 */}
             <div className="codes-list">
                 {codes.map((code) => (
-                    <div key={code.id} className={`code-card ${code.status === 'inactive' ? 'inactive' : ''} ${code.status === 'reported' ? 'reported' : ''}`}>
+                    <div key={code.id} className={`code-card ${code.status === 'inactive' ? 'inactive' : ''} ${code.status === 'reported' ? 'reported' : ''} ${code.status === 'suspended' ? 'reported' : ''}`}>
                         <div className="code-header">
                             <div className="code-platform">{code.platform}</div>
                             <div className={`code-status ${getStatusClass(code.status)}`}>
                                 {getStatusText(code.status)}
                             </div>
                         </div>
-                        
+
+                        {code.status === 'suspended' && (
+                            <div className="suspended-notice">
+                                此邀請碼已累積 5 人回報無法使用，請確認後重新上架
+                            </div>
+                        )}
+
                         <div className="code-value">{code.code}</div>
-                        
+
                         <div className="code-info">
                             <div className="info-item">
                                 <div className="info-number">{code.usageCount}</div>
                                 <div className="info-label">使用次數</div>
                             </div>
                             <div className="info-item">
-                                <div className="info-number">{code.reportCount}</div>
-                                <div className="info-label">檢舉次數</div>
+                                <div className="info-number" style={{ color: code.reportCount >= 5 ? '#dc3545' : code.reportCount > 0 ? '#f08030' : undefined }}>
+                                    {code.reportCount}
+                                </div>
+                                <div className="info-label">回報次數</div>
                             </div>
                             <div className="info-item">
                                 <div className="info-number">{code.daysCreated}</div>
@@ -394,17 +429,41 @@ export default function ManageCodePage() {
                                 <div className="info-label">最後使用</div>
                             </div>
                         </div>
-                        
+
+                        {code.reports.length > 0 && (
+                            <div className="report-section">
+                                <button className="report-toggle-btn" onClick={() => toggleReports(code.id)}>
+                                    {expandedReports[code.id] ? '▲' : '▼'} 查看回報原因（{code.reports.length} 筆）
+                                </button>
+                                {expandedReports[code.id] && (
+                                    <div className="report-list">
+                                        {code.reports.map((r, i) => (
+                                            <div key={i} className="report-item">
+                                                <span className="report-time">{new Date(r.reportedAt).toLocaleDateString('zh-TW')}</span>
+                                                <span className="report-reason">{r.reason || '（未填寫原因）'}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
                         <div className="code-actions">
-                            <button className="action-btn btn-edit" onClick={() => editCode(code.id)}>
+                            <button className="action-btn btn-edit" onClick={() => { editCode(code.id); if (code.status === 'suspended') confirmStillValid(code.id); }}>
                                 編輯
                             </button>
-                            <button 
-                                className={`action-btn btn-toggle ${code.status === 'active' ? 'deactivate' : ''}`} 
-                                onClick={() => toggleCode(code.id)}
-                            >
-                                {code.status === 'active' ? '下架' : '重新上架'}
-                            </button>
+                            {code.status === 'suspended' ? (
+                                <button className="action-btn btn-toggle" onClick={() => confirmStillValid(code.id)}>
+                                    確認仍有效
+                                </button>
+                            ) : (
+                                <button
+                                    className={`action-btn btn-toggle ${code.status === 'active' ? 'deactivate' : ''}`}
+                                    onClick={() => toggleCode(code.id)}
+                                >
+                                    {code.status === 'active' ? '下架' : '重新上架'}
+                                </button>
+                            )}
                             <button className="action-btn btn-delete" onClick={() => deleteCode(code.id)}>
                                 刪除
                             </button>

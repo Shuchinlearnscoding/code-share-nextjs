@@ -5,8 +5,9 @@ export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const platformId = searchParams.get('platformId');
   const query = searchParams.get('q');
+  const excludeIds = searchParams.get('excludeIds')?.split(',').filter(Boolean) || [];
 
-  const match = matchReferralCode({ platformId, query });
+  const match = matchReferralCode({ platformId, query, excludeIds });
 
   if (!match) {
     return NextResponse.json(

@@ -6,6 +6,7 @@ import {
     fetchReferralPlatforms,
     sendReferralEvent,
 } from '@/lib/referralApi';
+import { hasReported, isSuspended, submitReport } from '@/lib/reportStore';
 import './page.css';
 
 const platformIcons = {
@@ -17,6 +18,8 @@ const platformIcons = {
     環保集點: '🌱',
     街口支付: '🏪',
     蝦皮購物: '🛒',
+    Agoda: '🏨',
+    悠遊付: '🚇',
 };
 
 function getPlatformIcon(platformName) {
@@ -37,13 +40,19 @@ export default function HomePage() {
     const [currentInviteCode, setCurrentInviteCode] = useState(null);
     const [message, setMessage] = useState({ text: '', type: '' });
     const [isLoading, setIsLoading] = useState(false);
+    const [excludeIds, setExcludeIds] = useState([]);
+    const [noMoreCodes, setNoMoreCodes] = useState(false);
+
+    // Report modal states: null | 'confirm' | 'reason'
+    const [reportStep, setReportStep] = useState(null);
+    const [reportReason, setReportReason] = useState('');
 
     const searchContainerRef = useRef(null);
     const resultSectionRef = useRef(null);
 
     const popularPlatforms = useMemo(() => {
         const popular = platforms.filter((platform) => platform.isPopular && platform.codeCount > 0);
-        return popular.length > 0 ? popular.slice(0, 6) : platforms.slice(0, 6);
+        return popular.length > 0 ? popular.slice(0, 8) : platforms.slice(0, 8);
     }, [platforms]);
 
     useEffect(() => {
@@ -79,20 +88,40 @@ export default function HomePage() {
     const selectPlatform = (platform) => {
         setSearchInput(platform.name);
         setShowSuggestions(false);
-        searchPlatform({ platformId: platform.id });
+        setExcludeIds([]);
+        setNoMoreCodes(false);
+        searchPlatform({ platformId: platform.id, excludeIds: [] });
     };
 
-    const searchPlatform = async ({ platformId, query } = {}) => {
+    const searchPlatform = async ({ platformId, query, excludeIds: ids = excludeIds } = {}) => {
         setIsLoading(true);
+        setNoMoreCodes(false);
 
         try {
-            const data = await fetchReferralMatch({ platformId, query });
-            setCurrentInviteCode(data.inviteCode);
+            const data = await fetchReferralMatch({ platformId, query, excludeIds: ids });
+            const code = data.inviteCode;
+
+            if (isSuspended(code.id)) {
+                // Skip suspended codes by adding to excludeIds and retrying
+                const newExcludeIds = [...ids, code.id];
+                setExcludeIds(newExcludeIds);
+                const retry = await fetchReferralMatch({ platformId, query, excludeIds: newExcludeIds }).catch(() => null);
+                if (!retry) {
+                    setNoMoreCodes(true);
+                    setShowResult(false);
+                    setIsLoading(false);
+                    return;
+                }
+                setCurrentInviteCode(retry.inviteCode);
+            } else {
+                setCurrentInviteCode(code);
+            }
+
             displayResult();
         } catch (error) {
             setCurrentInviteCode(null);
             setShowResult(false);
-            showMessage(error.message || '找不到可用的邀請碼', 'error');
+            setNoMoreCodes(true);
         } finally {
             setIsLoading(false);
         }
@@ -100,7 +129,9 @@ export default function HomePage() {
 
     const randomSearch = () => {
         const query = searchInput.trim();
-        searchPlatform(query ? { query } : {});
+        setExcludeIds([]);
+        setNoMoreCodes(false);
+        searchPlatform(query ? { query, excludeIds: [] } : { excludeIds: [] });
     };
 
     const displayResult = () => {
@@ -144,29 +175,73 @@ export default function HomePage() {
     };
 
     const getNextCode = () => {
-        if (currentInviteCode?.platformId) {
-            searchPlatform({ platformId: currentInviteCode.platformId });
-        }
+        if (!currentInviteCode?.platformId) return;
+        const newExcludeIds = [...excludeIds, currentInviteCode.id];
+        setExcludeIds(newExcludeIds);
+        searchPlatform({ platformId: currentInviteCode.platformId, excludeIds: newExcludeIds });
     };
 
-    const reportCode = async () => {
+    // Step 1: open confirm dialog
+    const openReportModal = () => {
+        setReportStep('confirm');
+        setReportReason('');
+    };
+
+    // Step 2: move to reason input
+    const handleReportConfirm = () => {
+        setReportStep('reason');
+    };
+
+    // Step 3: submit report
+    const handleReportSubmit = async () => {
         if (!currentInviteCode) return;
 
-        const confirmed = confirm('確定要舉報此邀請碼無法使用嗎？');
-        if (!confirmed) return;
+        if (hasReported(currentInviteCode.id)) {
+            setReportStep(null);
+            showMessage('您已回報過此邀請碼', 'info');
+            return;
+        }
+
+        const result = submitReport(currentInviteCode.id, reportReason.trim());
+        setReportStep(null);
+        setReportReason('');
+
+        if (!result.ok) {
+            showMessage('您已回報過此邀請碼', 'info');
+            return;
+        }
 
         try {
             await sendReferralEvent({
                 inviteCodeId: currentInviteCode.id,
                 eventType: 'reported',
+                reason: reportReason.trim(),
             });
-            showMessage('感謝您的回報，我們會盡快處理', 'info');
+        } catch {
+            // Non-blocking: event logging failure shouldn't block UX
+        }
 
-            setTimeout(() => {
-                getNextCode();
-            }, 1200);
-        } catch (error) {
-            showMessage('回報失敗，請稍後再試', 'error');
+        if (result.suspended) {
+            showMessage('感謝回報！此邀請碼已累積 5 次回報，暫時下架待擁有者確認', 'info');
+        } else {
+            showMessage(`感謝回報！目前已有 ${result.count} 人回報此邀請碼`, 'info');
+        }
+
+        // Move to next code, excluding this one
+        const newExcludeIds = [...excludeIds, currentInviteCode.id];
+        setExcludeIds(newExcludeIds);
+
+        try {
+            const data = await fetchReferralMatch({
+                platformId: currentInviteCode.platformId,
+                excludeIds: newExcludeIds,
+            });
+            setCurrentInviteCode(data.inviteCode);
+            displayResult();
+        } catch {
+            setCurrentInviteCode(null);
+            setShowResult(false);
+            setNoMoreCodes(true);
         }
     };
 
@@ -175,7 +250,7 @@ export default function HomePage() {
 
         setTimeout(() => {
             setMessage({ text: '', type: '' });
-        }, 3000);
+        }, 4000);
     };
 
     const handleKeyDown = (e) => {
@@ -245,7 +320,7 @@ export default function HomePage() {
                                 className="platform-item"
                                 onClick={(e) => {
                                     e.preventDefault();
-                                    searchPlatform({ platformId: platform.id });
+                                    selectPlatform(platform);
                                 }}
                             >
                                 <div className="platform-icon">{getPlatformIcon(platform.name)}</div>
@@ -257,10 +332,12 @@ export default function HomePage() {
             </section>
 
             <section
-                className={`result-section ${showResult && currentInviteCode ? 'show' : ''}`}
+                className={`result-section ${showResult && (currentInviteCode || noMoreCodes) ? 'show' : ''}`}
                 ref={resultSectionRef}
             >
-                {currentInviteCode && (
+                {noMoreCodes && !currentInviteCode ? (
+                    <p className="no-codes-message">目前沒有可以使用的邀請碼</p>
+                ) : currentInviteCode ? (
                     <>
                         <p className="result-title">
                             已為您隨機配對到 <strong>{currentInviteCode.platformName}</strong> 的邀請碼
@@ -286,12 +363,12 @@ export default function HomePage() {
                             <button className="action-button btn-next" onClick={getNextCode}>
                                 我想換一個
                             </button>
-                            <button className="action-button btn-report" onClick={reportCode}>
+                            <button className="action-button btn-report" onClick={openReportModal}>
                                 Report<br />無法使用
                             </button>
                         </div>
                     </>
-                )}
+                ) : null}
 
                 {message.text && (
                     <div className={`message ${message.type}`}>
@@ -303,6 +380,42 @@ export default function HomePage() {
             {!showResult && message.text && (
                 <div className={`message floating-message ${message.type}`}>
                     {message.text}
+                </div>
+            )}
+
+            {/* Report Modal */}
+            {reportStep && (
+                <div className="report-modal-overlay" onClick={(e) => { if (e.target.classList.contains('report-modal-overlay')) setReportStep(null); }}>
+                    <div className="report-modal">
+                        {reportStep === 'confirm' && (
+                            <>
+                                <h3 className="report-modal-title">確認回報失效？</h3>
+                                <p className="report-modal-desc">確認回報此邀請碼無法使用嗎？<br />累積 5 人回報後將暫時下架。</p>
+                                <div className="report-modal-actions">
+                                    <button className="report-btn-cancel" onClick={() => setReportStep(null)}>取消</button>
+                                    <button className="report-btn-confirm" onClick={handleReportConfirm}>確認回報</button>
+                                </div>
+                            </>
+                        )}
+
+                        {reportStep === 'reason' && (
+                            <>
+                                <h3 className="report-modal-title">請說明原因（選填）</h3>
+                                <p className="report-modal-desc">您的回報將幫助邀請碼擁有者了解問題</p>
+                                <textarea
+                                    className="report-reason-input"
+                                    value={reportReason}
+                                    onChange={(e) => setReportReason(e.target.value)}
+                                    placeholder="例如：街口支付的活動已於 2024.12.31 截止"
+                                    rows={4}
+                                />
+                                <div className="report-modal-actions">
+                                    <button className="report-btn-cancel" onClick={() => setReportStep(null)}>取消</button>
+                                    <button className="report-btn-confirm" onClick={handleReportSubmit}>送出回報</button>
+                                </div>
+                            </>
+                        )}
+                    </div>
                 </div>
             )}
         </div>

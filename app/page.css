@@ -361,6 +361,104 @@
     margin: 0 auto 30px;
 }
 
+/* No More Codes */
+.no-codes-message {
+    text-align: center;
+    font-size: 18px;
+    color: #888;
+    padding: 20px 0;
+}
+
+/* Report Modal */
+.report-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.report-modal {
+    background: white;
+    border-radius: 16px;
+    padding: 36px 32px;
+    max-width: 420px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.report-modal-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 12px;
+}
+
+.report-modal-desc {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.report-reason-input {
+    width: 100%;
+    border: 1.5px solid #ddd;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 14px;
+    font-family: inherit;
+    resize: none;
+    outline: none;
+    transition: border-color 0.2s;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+}
+
+.report-reason-input:focus {
+    border-color: var(--color-primary);
+}
+
+.report-modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.report-btn-cancel {
+    padding: 10px 22px;
+    border-radius: 25px;
+    border: 1.5px solid #ccc;
+    background: white;
+    color: #666;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.report-btn-cancel:hover {
+    background: #f5f5f5;
+}
+
+.report-btn-confirm {
+    padding: 10px 22px;
+    border-radius: 25px;
+    border: none;
+    background: #dc3545;
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.report-btn-confirm:hover {
+    background: #b02a37;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .hero-title {

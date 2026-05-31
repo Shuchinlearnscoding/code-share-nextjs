@@ -18,7 +18,8 @@
 
 body {
     font-family: 'Microsoft JhengHei', 'PingFang TC', Arial, sans-serif;
-    background: #ffffff;
+    background: linear-gradient(135deg, #fffde7 0%, #fff9c4 40%, #ffecb3 100%);
+    background-attachment: fixed;
     min-height: 100vh;
     color: var(--color-text);
 }
