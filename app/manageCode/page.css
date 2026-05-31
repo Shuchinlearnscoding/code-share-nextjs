@@ -573,6 +573,64 @@
     }
 }
 
+/* Suspended Notice */
+.suspended-notice {
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: #856404;
+    margin-bottom: 12px;
+}
+
+/* Report Section */
+.report-section {
+    margin: 12px 0;
+    border-top: 1px solid #f0f0f0;
+    padding-top: 12px;
+}
+
+.report-toggle-btn {
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 13px;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: underline;
+}
+
+.report-toggle-btn:hover {
+    color: #555;
+}
+
+.report-list {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.report-item {
+    display: flex;
+    gap: 12px;
+    font-size: 13px;
+    background: #fafafa;
+    border-radius: 6px;
+    padding: 8px 12px;
+}
+
+.report-time {
+    color: #aaa;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.report-reason {
+    color: #555;
+}
+
 @media (max-width: 480px) {
     .manage-container {
         margin: 5px;
