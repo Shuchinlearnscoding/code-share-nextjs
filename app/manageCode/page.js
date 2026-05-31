@@ -148,17 +148,18 @@ export default function ManageCodePage() {
 
     // Open edit modal
     const editCode = (codeId) => {
+        const target = codes.find((c) => c.id === codeId);
+        if (!target) return;
+
         setEditingCodeId(codeId);
-        
-        // Mock data for editing
-        const mockData = {
-            platform: 'foodpanda',
-            inviteCode: 'FP123ABC',
-            description: '新用戶首單折扣 $100',
-            expiryDate: '2025-12-31'
-        };
-        
-        setFormData(mockData);
+        setFormData({
+            platform: target.platform,
+            customPlatform: '',
+            inviteCode: target.code,
+            description: '',
+            expiryDate: ''
+        });
+        setShowCustomPlatform(false);
         setShowModal(true);
         document.body.style.overflow = 'hidden';
     };
@@ -199,23 +200,28 @@ export default function ManageCodePage() {
     // Form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
+
         const submitBtn = e.target.querySelector('button[type="submit"]');
         const originalText = submitBtn.textContent;
-        
+
         submitBtn.textContent = '儲存中...';
         submitBtn.disabled = true;
-        
-        // Simulate API call
+
         setTimeout(() => {
-            const action = editingCodeId ? '更新' : '新增';
-            showAlert(`邀請碼${action}成功！`, 'success');
-            
+            if (editingCodeId) {
+                const target = codes.find((c) => c.id === editingCodeId);
+                if (target?.status === 'suspended') {
+                    confirmStillValid(editingCodeId);
+                }
+                showAlert('邀請碼更新成功，已重新上架！', 'success');
+            } else {
+                showAlert('邀請碼新增成功！', 'success');
+            }
+
             closeModal();
-            
             submitBtn.textContent = originalText;
             submitBtn.disabled = false;
-        }, 1500);
+        }, 1000);
     };
 
     // Show alert message
@@ -483,76 +489,89 @@ export default function ManageCodePage() {
                     </div>
                     
                     <form className="modal-form" onSubmit={handleSubmit}>
-                        <div className="form-group">
-                            <label className="form-label" htmlFor="platform">平台名稱 *</label>
-                            <select 
-                                className="form-select" 
-                                name="platform" 
-                                value={formData.platform}
-                                onChange={handlePlatformChange}
-                                required
-                            >
-                                <option value="">請選擇平台</option>
-                                <option value="foodpanda">Foodpanda</option>
-                                <option value="uber">Uber</option>
-                                <option value="uber_eats">Uber Eats</option>
-                                <option value="line_pay">Line Pay</option>
-                                <option value="jkos">街口支付</option>
-                                <option value="greenpoint">環保集點</option>
-                                <option value="shopee">蝦皮購物</option>
-                                <option value="other">其他 (請在下方說明)</option>
-                            </select>
-                            <div className="form-help">每個平台最多只能新增 2 組邀請碼</div>
-                        </div>
 
-                        {showCustomPlatform && (
+                        {editingCodeId ? (
+                            /* 編輯模式：平台固定不可更改 */
                             <div className="form-group">
-                                <label className="form-label" htmlFor="customPlatform">自訂平台名稱 *</label>
-                                <input 
-                                    type="text" 
-                                    className="form-input" 
-                                    name="customPlatform" 
-                                    value={formData.customPlatform}
-                                    onChange={handleInputChange}
-                                    placeholder="請輸入平台名稱"
-                                    required={showCustomPlatform}
-                                />
-                                <div className="form-help">新平台需要管理員審核後才會顯示</div>
+                                <label className="form-label">平台名稱</label>
+                                <div className="form-static">{formData.platform}</div>
                             </div>
+                        ) : (
+                            /* 新增模式：可選擇平台 */
+                            <>
+                                <div className="form-group">
+                                    <label className="form-label" htmlFor="platform">平台名稱 *</label>
+                                    <select
+                                        className="form-select"
+                                        name="platform"
+                                        value={formData.platform}
+                                        onChange={handlePlatformChange}
+                                        required
+                                    >
+                                        <option value="">請選擇平台</option>
+                                        <option value="Foodpanda">Foodpanda</option>
+                                        <option value="Uber">Uber</option>
+                                        <option value="Ubereats">Uber Eats</option>
+                                        <option value="街口支付">街口支付</option>
+                                        <option value="悠遊付">悠遊付</option>
+                                        <option value="環保集點">環保集點</option>
+                                        <option value="蝦皮購物">蝦皮購物</option>
+                                        <option value="Agoda">Agoda</option>
+                                        <option value="other">其他 (請在下方說明)</option>
+                                    </select>
+                                    <div className="form-help">每個平台最多只能新增 2 組邀請碼</div>
+                                </div>
+
+                                {showCustomPlatform && (
+                                    <div className="form-group">
+                                        <label className="form-label" htmlFor="customPlatform">自訂平台名稱 *</label>
+                                        <input
+                                            type="text"
+                                            className="form-input"
+                                            name="customPlatform"
+                                            value={formData.customPlatform}
+                                            onChange={handleInputChange}
+                                            placeholder="請輸入平台名稱"
+                                            required={showCustomPlatform}
+                                        />
+                                        <div className="form-help">新平台需要管理員審核後才會顯示</div>
+                                    </div>
+                                )}
+                            </>
                         )}
 
                         <div className="form-group">
                             <label className="form-label" htmlFor="inviteCode">邀請碼 *</label>
-                            <input 
-                                type="text" 
-                                className="form-input" 
-                                name="inviteCode" 
+                            <input
+                                type="text"
+                                className="form-input"
+                                name="inviteCode"
                                 value={formData.inviteCode}
                                 onChange={handleInviteCodeChange}
-                                placeholder="請輸入邀請碼" 
+                                placeholder="請輸入邀請碼"
                                 required
                             />
                             <div className="form-help">通常為 6-10 位英數字組合，不含特殊符號</div>
                         </div>
 
                         <div className="form-group">
-                            <label className="form-label" htmlFor="description">說明 (選填)</label>
-                            <textarea 
-                                className="form-input" 
-                                name="description" 
+                            <label className="form-label" htmlFor="description">更新活動資訊 (選填)</label>
+                            <textarea
+                                className="form-input"
+                                name="description"
                                 value={formData.description}
                                 onChange={handleInputChange}
                                 rows="3"
-                                placeholder="描述這個邀請碼的優惠內容或使用方式..."
+                                placeholder="描述優惠內容或使用方式，例如：新用戶首單折 $150..."
                             />
                         </div>
 
                         <div className="form-group">
                             <label className="form-label" htmlFor="expiryDate">有效期限 (選填)</label>
-                            <input 
-                                type="date" 
-                                className="form-input" 
-                                name="expiryDate" 
+                            <input
+                                type="date"
+                                className="form-input"
+                                name="expiryDate"
                                 value={formData.expiryDate}
                                 onChange={handleInputChange}
                             />
@@ -564,7 +583,7 @@ export default function ManageCodePage() {
                                 取消
                             </button>
                             <button type="submit" className="btn btn-primary">
-                                儲存邀請碼
+                                {editingCodeId ? '確認送出' : '新增邀請碼'}
                             </button>
                         </div>
                     </form>

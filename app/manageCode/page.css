@@ -573,6 +573,17 @@
     }
 }
 
+/* Read-only platform display in edit mode */
+.form-static {
+    padding: 12px 15px;
+    background: #f8f9fa;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 15px;
+    color: #555;
+    font-weight: 500;
+}
+
 /* Suspended Notice */
 .suspended-notice {
     background: #fff3cd;
