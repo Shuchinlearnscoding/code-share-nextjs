@@ -1,4 +1,4 @@
-/* 管理邀請碼 CSS - managecodepage.css */
+﻿/* 管理邀請碼 CSS - managecodepage.css */
 
 .manage-container {
     background: white;
@@ -29,7 +29,7 @@
 }
 
 .add-code-btn {
-    background: #667eea;
+    background: #d98b18;
     color: white;
     border: none;
     padding: 12px 25px;
@@ -44,9 +44,9 @@
 }
 
 .add-code-btn:hover {
-    background: #5a67d8;
+    background: #ad6810;
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 5px 15px rgba(217, 139, 24, 0.4);
 }
 
 /* 篩選和搜尋區域 */
@@ -88,12 +88,12 @@
 .filter-input:focus,
 .filter-select:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+    border-color: #d98b18;
+    box-shadow: 0 0 0 2px rgba(217, 139, 24, 0.1);
 }
 
 .filter-btn {
-    background: #667eea;
+    background: #d98b18;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -103,7 +103,7 @@
 }
 
 .filter-btn:hover {
-    background: #5a67d8;
+    background: #ad6810;
 }
 
 /* 邀請碼列表 */
@@ -124,7 +124,7 @@
 .code-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    border-color: #667eea;
+    border-color: #d98b18;
 }
 
 .code-card.inactive {
@@ -191,7 +191,7 @@
 .info-number {
     font-size: 24px;
     font-weight: bold;
-    color: #667eea;
+    color: #d98b18;
     margin-bottom: 5px;
 }
 
@@ -233,23 +233,23 @@
 }
 
 .btn-edit {
-    background: #667eea;
+    background: #d98b18;
     color: white;
-    border: 2px solid #667eea;
+    border: 2px solid #d98b18;
 }
 
 .btn-edit:hover {
-    background: #5a67d8;
+    background: #ad6810;
 }
 
 .btn-toggle {
     background: transparent;
-    color: #28a745;
-    border: 2px solid #28a745;
+    color: #d98b18;
+    border: 2px solid #d98b18;
 }
 
 .btn-toggle:hover {
-    background: #28a745;
+    background: #d98b18;
     color: white;
 }
 
@@ -375,9 +375,9 @@
 .form-input:focus,
 .form-select:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #d98b18;
     background: white;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    box-shadow: 0 0 0 3px rgba(217, 139, 24, 0.1);
 }
 
 .form-help {
@@ -406,24 +406,24 @@
 }
 
 .btn-primary {
-    background: #667eea;
+    background: #d98b18;
     color: white;
-    border-color: #667eea;
+    border-color: #d98b18;
 }
 
 .btn-primary:hover {
-    background: #5a67d8;
+    background: #ad6810;
     transform: translateY(-2px);
 }
 
 .btn-secondary {
     background: transparent;
-    color: #667eea;
-    border-color: #667eea;
+    color: #d98b18;
+    border-color: #d98b18;
 }
 
 .btn-secondary:hover {
-    background: #667eea;
+    background: #d98b18;
     color: white;
 }
 
@@ -512,7 +512,7 @@
 .stat-number {
     font-size: 24px;
     font-weight: bold;
-    color: #667eea;
+    color: #d98b18;
     margin-bottom: 5px;
 }
 

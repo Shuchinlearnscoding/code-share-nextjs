@@ -1,4 +1,4 @@
-/* 關於我們 CSS - aboutpage.css */
+﻿/* 關於我們 CSS - aboutpage.css */
 
 .about-container {
     max-width: 900px;
@@ -51,7 +51,7 @@
     transform: translateX(-50%);
     width: 60px;
     height: 4px;
-    background: linear-gradient(45deg, #667eea, #764ba2);
+    background: linear-gradient(45deg, #d98b18, #ad6810);
     border-radius: 2px;
 }
 
@@ -72,7 +72,7 @@
 }
 
 .highlight-text {
-    color: #667eea;
+    color: #d98b18;
     font-weight: 600;
 }
 
@@ -108,7 +108,7 @@
 .logo-image {
     width: 100px;
     height: 100px;
-    background: linear-gradient(45deg, #667eea, #764ba2);
+    background: linear-gradient(45deg, #d98b18, #ad6810);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -142,13 +142,13 @@
 
 .feature-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.15);
+    box-shadow: 0 10px 25px rgba(217, 139, 24, 0.15);
 }
 
 .feature-icon {
     width: 60px;
     height: 60px;
-    background: linear-gradient(45deg, #667eea, #764ba2);
+    background: linear-gradient(45deg, #d98b18, #ad6810);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -172,7 +172,7 @@
 }
 
 .stats-section {
-    background: linear-gradient(45deg, #667eea, #764ba2);
+    background: linear-gradient(45deg, #d98b18, #ad6810);
     color: white;
     border-radius: 20px;
     padding: 40px;
@@ -237,7 +237,7 @@
 .member-avatar {
     width: 80px;
     height: 80px;
-    background: linear-gradient(45deg, #667eea, #764ba2);
+    background: linear-gradient(45deg, #d98b18, #ad6810);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -257,7 +257,7 @@
 
 .member-role {
     font-size: 14px;
-    color: #667eea;
+    color: #d98b18;
     font-weight: 500;
     margin-bottom: 15px;
 }
@@ -301,7 +301,7 @@
 .contact-icon {
     width: 50px;
     height: 50px;
-    background: linear-gradient(45deg, #667eea, #764ba2);
+    background: linear-gradient(45deg, #d98b18, #ad6810);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -317,18 +317,18 @@
 }
 
 .contact-link {
-    color: #667eea;
+    color: #d98b18;
     text-decoration: none;
     transition: color 0.3s ease;
 }
 
 .contact-link:hover {
-    color: #5a67d8;
+    color: #ad6810;
     text-decoration: underline;
 }
 
 .vision-section {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #d98b18 0%, #ad6810 100%);
     color: white;
     padding: 50px;
     border-radius: 20px;

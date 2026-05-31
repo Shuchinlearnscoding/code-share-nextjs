@@ -1,4 +1,4 @@
-/* 會員資料編輯 CSS - profileeditpage.css */
+﻿/* 會員資料編輯 CSS - profileeditpage.css */
 /* css selector
 - select by .  <= all
 - select by tag_name  <= html tag
@@ -83,9 +83,9 @@ h1 {
 
 .form-input:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #d98b18;
     background: white;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    box-shadow: 0 0 0 3px rgba(217, 139, 24, 0.1);
 }
 
 .form-input:disabled {
@@ -113,7 +113,7 @@ h1 {
 
 .form-select:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #d98b18;
     background: white;
 }
 
@@ -126,7 +126,7 @@ h1 {
 .checkbox-input {
     width: 18px;
     height: 18px;
-    accent-color: #667eea;
+    accent-color: #d98b18;
 }
 
 .checkbox-label {
@@ -192,7 +192,7 @@ h1 {
 
 .social-btn.connected {
     background: #d4edda;
-    border-color: #28a745;
+    border-color: #d98b18;
     color: #155724;
 }
 
@@ -225,25 +225,25 @@ h1 {
 }
 
 .btn-primary {
-    background: #667eea;
+    background: #d98b18;
     color: white;
-    border-color: #667eea;
+    border-color: #d98b18;
 }
 
 .btn-primary:hover {
-    background: #5a67d8;
+    background: #ad6810;
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 5px 15px rgba(217, 139, 24, 0.4);
 }
 
 .btn-secondary {
     background: transparent;
-    color: #667eea;
-    border-color: #667eea;
+    color: #d98b18;
+    border-color: #d98b18;
 }
 
 .btn-secondary:hover {
-    background: #667eea;
+    background: #d98b18;
     color: white;
 }
 
@@ -283,7 +283,7 @@ h1 {
 .stat-number {
     font-size: 24px;
     font-weight: bold;
-    color: #667eea;
+    color: #d98b18;
     margin-bottom: 5px;
 }
 

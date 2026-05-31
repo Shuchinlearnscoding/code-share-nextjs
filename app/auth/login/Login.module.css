@@ -1,10 +1,10 @@
-/* styles/Login.module.css - 登入頁面完整樣式 */
+﻿/* styles/Login.module.css - 登入頁面完整樣式 */
 
 .loginContainer {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #d98b18 0%, #ad6810 100%);
     position: relative;
     overflow: hidden;
 }
@@ -83,7 +83,7 @@
     left: 0;
     right: 0;
     height: 5px;
-    background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
+    background: linear-gradient(90deg, #d98b18, #ad6810, #d98b18);
     border-radius: 24px 24px 0 0;
     background-size: 200% 100%;
     animation: loginGradient 3s ease infinite;
@@ -115,7 +115,7 @@
     transform: translateX(-50%);
     width: 60px;
     height: 3px;
-    background: linear-gradient(45deg, #667eea, #764ba2);
+    background: linear-gradient(45deg, #d98b18, #ad6810);
     border-radius: 2px;
 }
 
@@ -292,16 +292,16 @@
 
 .formInput:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #d98b18;
     background: white;
     box-shadow: 
-        0 0 0 4px rgba(102, 126, 234, 0.1),
-        0 4px 12px rgba(102, 126, 234, 0.15);
+        0 0 0 4px rgba(217, 139, 24, 0.1),
+        0 4px 12px rgba(217, 139, 24, 0.15);
     transform: translateY(-1px);
 }
 
 .formInput:focus + .formLabel {
-    color: #667eea;
+    color: #d98b18;
 }
 
 .formInput.error {
@@ -386,7 +386,7 @@
 .checkboxInput {
     width: 20px;
     height: 20px;
-    accent-color: #667eea;
+    accent-color: #d98b18;
     cursor: pointer;
     border-radius: 4px;
 }
@@ -406,7 +406,7 @@
 .linkButton {
     background: none;
     border: none;
-    color: #667eea;
+    color: #d98b18;
     cursor: pointer;
     text-decoration: none;
     font-size: inherit;
@@ -417,7 +417,7 @@
 }
 
 .linkButton:hover {
-    color: #5a67d8;
+    color: #ad6810;
     text-decoration: underline;
 }
 
@@ -425,7 +425,7 @@
 .authButton {
     width: 100%;
     padding: 1rem 1.5rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #d98b18 0%, #ad6810 100%);
     color: white;
     border: none;
     border-radius: 16px;
@@ -441,7 +441,7 @@
     justify-content: center;
     gap: 0.5rem;
     letter-spacing: 0.025em;
-    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4px 16px rgba(217, 139, 24, 0.3);
 }
 
 .authButton::before {
@@ -461,7 +461,7 @@
 
 .authButton:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 8px 32px rgba(217, 139, 24, 0.4);
 }
 
 .authButton:active {
@@ -509,7 +509,7 @@
 }
 
 .authLink {
-    color: #667eea;
+    color: #d98b18;
     text-decoration: none;
     font-weight: 600;
     transition: all 0.3s ease;
@@ -518,8 +518,8 @@
 }
 
 .authLink:hover {
-    color: #5a67d8;
-    background: rgba(102, 126, 234, 0.1);
+    color: #ad6810;
+    background: rgba(217, 139, 24, 0.1);
     text-decoration: none;
 }
 
@@ -573,9 +573,9 @@
 }
 
 .alert.info {
-    background: rgba(102, 126, 234, 0.1);
+    background: rgba(217, 139, 24, 0.1);
     color: #3182ce;
-    border-color: rgba(102, 126, 234, 0.3);
+    border-color: rgba(217, 139, 24, 0.3);
 }
 
 .alert.warning {
@@ -627,7 +627,7 @@
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background: #28a745;
+    background: #d98b18;
     color: white;
     text-align: center;
     line-height: 20px;
