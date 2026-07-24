@@ -4,7 +4,7 @@
 .hero-section {
     text-align: center;
     padding: 60px 0 40px;
-    color: #3b2b11;
+    color: #14304a;
 }
 
 .hero-title {
@@ -32,7 +32,7 @@
     padding: 40px;
     margin: 0 20px 40px;
     border: 1px solid var(--color-border);
-    box-shadow: 0 14px 36px rgba(89, 61, 18, 0.09);
+    box-shadow: 0 14px 36px rgba(7, 89, 133, 0.09);
 }
 
 .search-title {
@@ -63,7 +63,7 @@
 .search-input:focus {
     border-color: var(--color-primary);
     background: white;
-    box-shadow: 0 0 0 3px rgba(217, 139, 24, 0.14);
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.14);
 }
 
 .search-input::placeholder {
@@ -116,7 +116,7 @@
 }
 
 .search-button {
-    background: var(--color-primary);
+    background: var(--color-primary-gradient);
     color: white;
     border: none;
     padding: 15px 30px;
@@ -132,7 +132,7 @@
 .search-button:hover {
     background: var(--color-primary-dark);
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(217, 139, 24, 0.3);
+    box-shadow: 0 5px 15px rgba(2, 132, 199, 0.3);
 }
 
 .search-button:disabled {
@@ -170,7 +170,7 @@
     padding: 20px;
     border-radius: 8px;
     background: var(--color-primary-pale);
-    border: 1px solid #f1dfba;
+    border: 1px solid #bae6fd;
     cursor: pointer;
     transition: all 0.3s ease;
     text-decoration: none;
@@ -179,8 +179,8 @@
 
 .platform-item:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(217, 139, 24, 0.2);
-    background: var(--color-primary);
+    box-shadow: 0 10px 25px rgba(2, 132, 199, 0.2);
+    background: var(--color-primary-gradient);
     color: white;
 }
 
@@ -206,7 +206,7 @@
     padding: 40px;
     margin: 20px 20px 40px;
     border: 1px solid var(--color-border);
-    box-shadow: 0 14px 36px rgba(89, 61, 18, 0.09);
+    box-shadow: 0 14px 36px rgba(7, 89, 133, 0.09);
     display: none;
 }
 
@@ -281,14 +281,14 @@
 }
 
 .btn-use {
-    background: var(--color-primary);
+    background: var(--color-primary-gradient);
     color: white;
 }
 
 .btn-use:hover {
     background: var(--color-primary-dark);
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(217, 139, 24, 0.3);
+    box-shadow: 0 5px 15px rgba(2, 132, 199, 0.3);
 }
 
 .btn-next {
