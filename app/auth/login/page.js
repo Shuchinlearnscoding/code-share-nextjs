@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 import Head from 'next/head';
 import Link from 'next/link';
 import { signIn, getSession } from 'next-auth/react';
+import { startDemoSession } from '@/lib/authStore';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 import styles from './Login.module.css'; // './page.css'
 
 
@@ -13,6 +15,7 @@ import styles from './Login.module.css'; // './page.css'
 
 export default function LoginPage() {
     const router = useRouter();
+    const { t } = useLanguage();
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -267,15 +270,15 @@ export default function LoginPage() {
             <div className={styles.loginContainer}>
                 {/* 歡迎區域 */}
                 <section className={styles.welcomeSection}>
-                    <h1 className={styles.welcomeTitle}>歡迎回來</h1>
-                    <p className={styles.welcomeSubtitle}>登入您的帳戶，繼續分享優質邀請碼</p>
+                    <h1 className={styles.welcomeTitle}>{t('login.welcomeTitle')}</h1>
+                    <p className={styles.welcomeSubtitle}>{t('login.welcomeSubtitle')}</p>
                 </section>
 
                 <div className={`${styles.loginCard} ${styles.fadeIn}`}>
                     {/* 標題區域 */}
                     <div className={styles.authHeader}>
-                        <h2 className={styles.authTitle}>會員登入</h2>
-                        <p className={styles.authSubtitle}>使用您的帳戶登入</p>
+                        <h2 className={styles.authTitle}>{t('login.cardTitle')}</h2>
+                        <p className={styles.authSubtitle}>{t('login.cardSubtitle')}</p>
                     </div>
 
                     {/* 警告訊息 */}
@@ -298,7 +301,7 @@ export default function LoginPage() {
                             ) : (
                                 <span className={styles.socialIcon}>🟡</span>
                             )}
-                            使用 Google 登入
+                            {t('login.googleLogin')}
                         </button>
 
                         <button
@@ -312,7 +315,7 @@ export default function LoginPage() {
                             ) : (
                                 <span className={styles.socialIcon}>📘</span>
                             )}
-                            使用 Facebook 登入
+                            {t('login.facebookLogin')}
                         </button>
 
                         <button
@@ -326,19 +329,19 @@ export default function LoginPage() {
                             ) : (
                                 <span className={styles.socialIcon}>🟢</span>
                             )}
-                            使用 LINE 登入
+                            {t('login.lineLogin')}
                         </button>
                     </div>
 
                     <div className={styles.divider}>
-                        <span>或使用電子郵件登入</span>
+                        <span>{t('login.orEmail')}</span>
                     </div>
 
                     {/* 登入表單 */}
                     <form onSubmit={handleSubmit} className={styles.authForm}>
                         <div className={styles.formGroup}>
                             <label htmlFor="email" className={styles.formLabel}>
-                                電子郵件
+                                {t('login.emailLabel')}
                             </label>
                             <input
                                 type="email"
@@ -348,7 +351,7 @@ export default function LoginPage() {
                                 onChange={handleInputChange}
                                 onKeyPress={handleKeyPress}
                                 className={`${styles.formInput} ${errors.email ? styles.error : ''}`}
-                                placeholder="請輸入您的電子郵件"
+                                placeholder={t('login.emailPlaceholder')}
                                 required
                                 autoComplete="email"
                             />
@@ -359,7 +362,7 @@ export default function LoginPage() {
 
                         <div className={styles.formGroup}>
                             <label htmlFor="loginPassword" className={styles.formLabel}>
-                                密碼
+                                {t('login.passwordLabel')}
                             </label>
                             <div className={styles.passwordInputGroup}>
                                 <input
@@ -370,7 +373,7 @@ export default function LoginPage() {
                                     onChange={handleInputChange}
                                     onKeyPress={handleKeyPress}
                                     className={`${styles.formInput} ${errors.password ? styles.error : ''}`}
-                                    placeholder="請輸入您的密碼"
+                                    placeholder={t('login.passwordPlaceholder')}
                                     required
                                     autoComplete="current-password"
                                 />
@@ -398,7 +401,7 @@ export default function LoginPage() {
                                     className={styles.checkboxInput}
                                 />
                                 <label htmlFor="rememberMe" className={styles.checkboxLabel}>
-                                    記住我
+                                    {t('login.rememberMe')}
                                 </label>
                             </div>
 
@@ -408,7 +411,7 @@ export default function LoginPage() {
                                     onClick={handleForgotPassword}
                                     className={styles.linkButton}
                                 >
-                                    忘記密碼？
+                                    {t('login.forgotPassword')}
                                 </button>
                             </div>
                         </div>
@@ -421,10 +424,10 @@ export default function LoginPage() {
                             {loading ? (
                                 <>
                                     <span className={styles.loadingSpinner}></span>
-                                    登入中...
+                                    {t('login.submit')}...
                                 </>
                             ) : (
-                                '登入'
+                                t('login.submit')
                             )}
                         </button>
                     </form>
@@ -432,15 +435,22 @@ export default function LoginPage() {
                     {/* 頁腳 */}
                     <div className={styles.authFooter}>
                         <p>
-                            還沒有帳戶？{' '}
+                            {t('login.noAccount')}{' '}
                             <Link href="/register" className={styles.authLink}>
-                                立即註冊
+                                {t('login.registerNow')}
                             </Link>
                         </p>
                         <p>
-                            <Link href="/login?demo=true" className={styles.demoLink}>
-                                使用示範帳戶登入
-                            </Link>
+                            <button
+                                type="button"
+                                className={styles.demoLink}
+                                onClick={() => {
+                                    startDemoSession();
+                                    router.push('/manageCode');
+                                }}
+                            >
+                                {t('login.demoLogin')}
+                            </button>
                         </p>
                     </div>
                 </div>

@@ -7,6 +7,8 @@ import {
     sendReferralEvent,
 } from '@/lib/referralApi';
 import { hasReported, isSuspended, submitReport } from '@/lib/reportStore';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
+import HomeBanner from './components/HomeBanner';
 import './page.css';
 
 const platformIcons = {
@@ -26,12 +28,13 @@ function getPlatformIcon(platformName) {
     return platformIcons[platformName] || '🎁';
 }
 
-function getDisplayValue(inviteCode) {
+function getDisplayValue(inviteCode, t) {
     if (!inviteCode) return '';
-    return inviteCode.code || '推薦連結';
+    return inviteCode.code || t('home.referralLinkFallback');
 }
 
 export default function HomePage() {
+    const { t } = useLanguage();
     const [searchInput, setSearchInput] = useState('');
     const [platforms, setPlatforms] = useState([]);
     const [suggestions, setSuggestions] = useState([]);
@@ -61,7 +64,7 @@ export default function HomePage() {
                 const data = await fetchReferralPlatforms();
                 setPlatforms(data.platforms || []);
             } catch (error) {
-                showMessage('平台資料載入失敗，請稍後再試', 'error');
+                showMessage(t('home.messages.platformLoadError'), 'error');
             }
         };
 
@@ -158,19 +161,19 @@ export default function HomePage() {
 
             if (currentInviteCode.referralUrl) {
                 window.open(currentInviteCode.referralUrl, '_blank', 'noopener,noreferrer');
-                showMessage('已為您開啟推薦連結', 'success');
+                showMessage(t('home.messages.linkOpened'), 'success');
                 return;
             }
 
             if (currentInviteCode.code && navigator.clipboard) {
                 await navigator.clipboard.writeText(currentInviteCode.code);
-                showMessage('邀請碼已複製，祝您使用順利！', 'success');
+                showMessage(t('home.messages.codeCopied'), 'success');
                 return;
             }
 
-            showMessage('謝謝您的使用！', 'success');
+            showMessage(t('home.messages.thanksUse'), 'success');
         } catch (error) {
-            showMessage('操作失敗，請稍後再試', 'error');
+            showMessage(t('home.messages.actionFailed'), 'error');
         }
     };
 
@@ -198,7 +201,7 @@ export default function HomePage() {
 
         if (hasReported(currentInviteCode.id)) {
             setReportStep(null);
-            showMessage('您已回報過此邀請碼', 'info');
+            showMessage(t('home.messages.alreadyReported'), 'info');
             return;
         }
 
@@ -207,7 +210,7 @@ export default function HomePage() {
         setReportReason('');
 
         if (!result.ok) {
-            showMessage('您已回報過此邀請碼', 'info');
+            showMessage(t('home.messages.alreadyReported'), 'info');
             return;
         }
 
@@ -222,9 +225,9 @@ export default function HomePage() {
         }
 
         if (result.suspended) {
-            showMessage('感謝回報！此邀請碼已累積 5 次回報，暫時下架待擁有者確認', 'info');
+            showMessage(t('home.messages.reportedSuspended'), 'info');
         } else {
-            showMessage(`感謝回報！目前已有 ${result.count} 人回報此邀請碼`, 'info');
+            showMessage(t('home.messages.reportedCount', { count: result.count }), 'info');
         }
 
         // Move to next code, excluding this one
@@ -274,13 +277,10 @@ export default function HomePage() {
 
     return (
         <div>
-            <section className="hero-section">
-                <h1 className="hero-title">邀請碼大全</h1>
-                <p className="hero-subtitle">最完整的MGM推薦碼分享平台，輕鬆找到優質邀請碼</p>
-            </section>
+            <HomeBanner />
 
             <section className="search-section">
-                <h2 className="search-title">搜尋邀請碼</h2>
+                <h2 className="search-title">{t('home.searchTitle')}</h2>
 
                 <div className="search-container" ref={searchContainerRef}>
                     <input
@@ -289,7 +289,7 @@ export default function HomePage() {
                         value={searchInput}
                         onChange={(e) => handleSearchInput(e.target.value)}
                         onKeyDown={handleKeyDown}
-                        placeholder="搜尋平台名稱 (例如: Foodpanda, Uber...)"
+                        placeholder={t('home.searchPlaceholder')}
                     />
 
                     <div className={`search-suggestions ${showSuggestions ? 'show' : ''}`}>
@@ -306,12 +306,12 @@ export default function HomePage() {
                     </div>
 
                     <button className="search-button" onClick={randomSearch} disabled={isLoading}>
-                        {isLoading ? '搜尋中...' : '隨機獲取邀請碼'}
+                        {isLoading ? t('home.randomButtonLoading') : t('home.randomButton')}
                     </button>
                 </div>
 
                 <div className="popular-platforms">
-                    <h3 className="platforms-title">熱門平台</h3>
+                    <h3 className="platforms-title">{t('home.platformsTitle')}</h3>
                     <div className="platforms-grid">
                         {popularPlatforms.map((platform) => (
                             <a
@@ -336,11 +336,11 @@ export default function HomePage() {
                 ref={resultSectionRef}
             >
                 {noMoreCodes && !currentInviteCode ? (
-                    <p className="no-codes-message">目前沒有可以使用的邀請碼</p>
+                    <p className="no-codes-message">{t('home.noCodesMessage')}</p>
                 ) : currentInviteCode ? (
                     <>
                         <p className="result-title">
-                            已為您隨機配對到 <strong>{currentInviteCode.platformName}</strong> 的邀請碼
+                            {t('home.resultPrefix')} <strong>{currentInviteCode.platformName}</strong> {t('home.resultSuffix')}
                         </p>
 
                         {currentInviteCode.activityDescription && (
@@ -348,23 +348,23 @@ export default function HomePage() {
                         )}
 
                         <div className={`invite-code ${currentInviteCode.referralUrl ? 'link-value' : ''}`}>
-                            {getDisplayValue(currentInviteCode)}
+                            {getDisplayValue(currentInviteCode, t)}
                         </div>
 
                         <div className="result-meta">
                             <span>{currentInviteCode.categoryName}</span>
-                            <span>{currentInviteCode.verificationStatus === 'unverified' ? '尚未驗證' : '已驗證'}</span>
+                            <span>{currentInviteCode.verificationStatus === 'unverified' ? t('home.unverified') : t('home.verified')}</span>
                         </div>
 
                         <div className="result-actions">
                             <button className="action-button btn-use" onClick={useCode}>
-                                {currentInviteCode.referralUrl ? '開啟推薦連結' : '複製邀請碼'}
+                                {currentInviteCode.referralUrl ? t('home.useCodeLink') : t('home.useCodeCopy')}
                             </button>
                             <button className="action-button btn-next" onClick={getNextCode}>
-                                我想換一個
+                                {t('home.next')}
                             </button>
                             <button className="action-button btn-report" onClick={openReportModal}>
-                                Report<br />無法使用
+                                {t('home.reportLine1')}<br />{t('home.reportLine2')}
                             </button>
                         </div>
                     </>
@@ -389,29 +389,29 @@ export default function HomePage() {
                     <div className="report-modal">
                         {reportStep === 'confirm' && (
                             <>
-                                <h3 className="report-modal-title">確認回報失效？</h3>
-                                <p className="report-modal-desc">確認回報此邀請碼無法使用嗎？<br />累積 5 人回報後將暫時下架。</p>
+                                <h3 className="report-modal-title">{t('home.report.confirmTitle')}</h3>
+                                <p className="report-modal-desc">{t('home.report.confirmDesc')}</p>
                                 <div className="report-modal-actions">
-                                    <button className="report-btn-cancel" onClick={() => setReportStep(null)}>取消</button>
-                                    <button className="report-btn-confirm" onClick={handleReportConfirm}>確認回報</button>
+                                    <button className="report-btn-cancel" onClick={() => setReportStep(null)}>{t('home.report.cancel')}</button>
+                                    <button className="report-btn-confirm" onClick={handleReportConfirm}>{t('home.report.confirmReport')}</button>
                                 </div>
                             </>
                         )}
 
                         {reportStep === 'reason' && (
                             <>
-                                <h3 className="report-modal-title">請說明原因（選填）</h3>
-                                <p className="report-modal-desc">您的回報將幫助邀請碼擁有者了解問題</p>
+                                <h3 className="report-modal-title">{t('home.report.reasonTitle')}</h3>
+                                <p className="report-modal-desc">{t('home.report.reasonDesc')}</p>
                                 <textarea
                                     className="report-reason-input"
                                     value={reportReason}
                                     onChange={(e) => setReportReason(e.target.value)}
-                                    placeholder="例如：街口支付的活動已於 2024.12.31 截止"
+                                    placeholder={t('home.report.reasonPlaceholder')}
                                     rows={4}
                                 />
                                 <div className="report-modal-actions">
-                                    <button className="report-btn-cancel" onClick={() => setReportStep(null)}>取消</button>
-                                    <button className="report-btn-confirm" onClick={handleReportSubmit}>送出回報</button>
+                                    <button className="report-btn-cancel" onClick={() => setReportStep(null)}>{t('home.report.cancel')}</button>
+                                    <button className="report-btn-confirm" onClick={handleReportSubmit}>{t('home.report.submit')}</button>
                                 </div>
                             </>
                         )}

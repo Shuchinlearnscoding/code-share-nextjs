@@ -6,10 +6,13 @@ import { useRouter } from 'next/navigation';
 import Head from 'next/head';
 import Link from 'next/link';
 import { signIn, getSession } from 'next-auth/react';
+import { startDemoSession } from '@/lib/authStore';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 import styles from './Register.module.css';
 
 export default function RegisterPage() {
     const router = useRouter();
+    const { t } = useLanguage();
     const [formData, setFormData] = useState({
         email: '',
         nickname: '',
@@ -28,7 +31,6 @@ export default function RegisterPage() {
     });
     const [passwordStrength, setPasswordStrength] = useState({
         score: 0,
-        label: '未輸入',
         requirements: {
             length: false,
             lowercase: false,
@@ -102,11 +104,9 @@ export default function RegisterPage() {
         };
 
         const score = Object.values(requirements).filter(Boolean).length;
-        const labels = ['未輸入', '弱', '普通', '良好', '強'];
 
         setPasswordStrength({
-            score,
-            label: password ? labels[score] : '未輸入',
+            score: password ? score : 0,
             requirements
         });
     };
@@ -224,7 +224,6 @@ export default function RegisterPage() {
                 });
                 setPasswordStrength({
                     score: 0,
-                    label: '未輸入',
                     requirements: { length: false, lowercase: false, uppercase: false, number: false }
                 });
 
@@ -320,15 +319,15 @@ export default function RegisterPage() {
             <div className={styles.registerContainer}>
                 {/* 歡迎區域 */}
                 <section className={styles.welcomeSection}>
-                    <h1 className={styles.welcomeTitle}>加入邀請碼大全</h1>
-                    <p className={styles.welcomeSubtitle}>註冊會員，開始您的邀請碼分享之旅</p>
+                    <h1 className={styles.welcomeTitle}>{t('signup.welcomeTitle')}</h1>
+                    <p className={styles.welcomeSubtitle}>{t('signup.welcomeSubtitle')}</p>
                 </section>
 
                 <div className={`${styles.registerCard} ${styles.fadeIn}`}>
                     {/* 標題區域 */}
                     <div className={styles.authHeader}>
-                        <h2 className={styles.authTitle}>會員註冊</h2>
-                        <p className={styles.authSubtitle}>創建您的新帳戶</p>
+                        <h2 className={styles.authTitle}>{t('signup.cardTitle')}</h2>
+                        <p className={styles.authSubtitle}>{t('signup.cardSubtitle')}</p>
                     </div>
 
                     {/* 警告訊息 */}
@@ -351,7 +350,7 @@ export default function RegisterPage() {
                             ) : (
                                 <span className={styles.socialIcon}>🟡</span>
                             )}
-                            使用 Google 註冊
+                            {t('signup.googleRegister')}
                         </button>
 
                         <button
@@ -365,7 +364,7 @@ export default function RegisterPage() {
                             ) : (
                                 <span className={styles.socialIcon}>📘</span>
                             )}
-                            使用 Facebook 註冊
+                            {t('signup.facebookRegister')}
                         </button>
 
                         <button
@@ -379,19 +378,19 @@ export default function RegisterPage() {
                             ) : (
                                 <span className={styles.socialIcon}>🟢</span>
                             )}
-                            使用 LINE 註冊
+                            {t('signup.lineRegister')}
                         </button>
                     </div>
 
                     <div className={styles.divider}>
-                        <span>或使用電子郵件註冊</span>
+                        <span>{t('signup.orEmail')}</span>
                     </div>
 
                     {/* 註冊表單 */}
                     <form onSubmit={handleSubmit} className={styles.authForm}>
                         <div className={styles.formGroup}>
                             <label htmlFor="email" className={styles.formLabel}>
-                                電子郵件 *
+                                {t('signup.form.emailLabel')}
                             </label>
                             <input
                                 type="email"
@@ -400,10 +399,10 @@ export default function RegisterPage() {
                                 value={formData.email}
                                 onChange={handleInputChange}
                                 className={`${styles.formInput} ${errors.email ? styles.error : ''}`}
-                                placeholder="請輸入您的電子郵件"
+                                placeholder={t('signup.form.emailPlaceholder')}
                                 required
                             />
-                            <div className={styles.formHelp}>我們會發送驗證郵件到此信箱</div>
+                            <div className={styles.formHelp}>{t('signup.form.emailHelp')}</div>
                             {errors.email && (
                                 <div className={styles.formError}>{errors.email}</div>
                             )}
@@ -411,7 +410,7 @@ export default function RegisterPage() {
 
                         <div className={styles.formGroup}>
                             <label htmlFor="nickname" className={styles.formLabel}>
-                                暱稱 *
+                                {t('signup.form.nicknameLabel')}
                             </label>
                             <input
                                 type="text"
@@ -420,10 +419,10 @@ export default function RegisterPage() {
                                 value={formData.nickname}
                                 onChange={handleInputChange}
                                 className={`${styles.formInput} ${errors.nickname ? styles.error : ''}`}
-                                placeholder="請輸入您的暱稱"
+                                placeholder={t('signup.form.nicknamePlaceholder')}
                                 required
                             />
-                            <div className={styles.formHelp}>2-20 個字元，可以是中文、英文或數字</div>
+                            <div className={styles.formHelp}>{t('signup.form.nicknameHelp')}</div>
                             {errors.nickname && (
                                 <div className={styles.formError}>{errors.nickname}</div>
                             )}
@@ -431,7 +430,7 @@ export default function RegisterPage() {
 
                         <div className={styles.formGroup}>
                             <label htmlFor="registerPassword" className={styles.formLabel}>
-                                密碼 *
+                                {t('signup.form.passwordLabel')}
                             </label>
                             <div className={styles.passwordInputGroup}>
                                 <input
@@ -441,7 +440,7 @@ export default function RegisterPage() {
                                     value={formData.password}
                                     onChange={handleInputChange}
                                     className={`${styles.formInput} ${errors.password ? styles.error : ''}`}
-                                    placeholder="請設定您的密碼"
+                                    placeholder={t('signup.form.passwordPlaceholder')}
                                     required
                                 />
                                 <button
@@ -459,38 +458,38 @@ export default function RegisterPage() {
                                     <div className={`${styles.strengthFill} ${styles[getStrengthClass()]}`}></div>
                                 </div>
                                 <div className={styles.strengthText}>
-                                    密碼強度：{passwordStrength.label}
+                                    {t('signup.form.strengthLabel')}{t('signup.form.strengthLevels')[passwordStrength.score]}
                                 </div>
-                                
+
                                 <div className={styles.strengthRequirements}>
                                     <div className={`${styles.requirementItem} ${passwordStrength.requirements.length ? styles.met : ''}`}>
                                         <span className={styles.checkIcon}>
                                             {passwordStrength.requirements.length ? '✓' : ''}
                                         </span>
-                                        至少 8 個字元
+                                        {t('signup.form.reqLength')}
                                     </div>
                                     <div className={`${styles.requirementItem} ${passwordStrength.requirements.lowercase ? styles.met : ''}`}>
                                         <span className={styles.checkIcon}>
                                             {passwordStrength.requirements.lowercase ? '✓' : ''}
                                         </span>
-                                        包含小寫字母
+                                        {t('signup.form.reqLowercase')}
                                     </div>
                                     <div className={`${styles.requirementItem} ${passwordStrength.requirements.uppercase ? styles.met : ''}`}>
                                         <span className={styles.checkIcon}>
                                             {passwordStrength.requirements.uppercase ? '✓' : ''}
                                         </span>
-                                        包含大寫字母
+                                        {t('signup.form.reqUppercase')}
                                     </div>
                                     <div className={`${styles.requirementItem} ${passwordStrength.requirements.number ? styles.met : ''}`}>
                                         <span className={styles.checkIcon}>
                                             {passwordStrength.requirements.number ? '✓' : ''}
                                         </span>
-                                        包含數字
+                                        {t('signup.form.reqNumber')}
                                     </div>
                                 </div>
                             </div>
-                            
-                            <div className={styles.formHelp}>至少 8 個字元，包含英文字母和數字</div>
+
+                            <div className={styles.formHelp}>{t('signup.form.passwordHelp')}</div>
                             {errors.password && (
                                 <div className={styles.formError}>{errors.password}</div>
                             )}
@@ -498,7 +497,7 @@ export default function RegisterPage() {
 
                         <div className={styles.formGroup}>
                             <label htmlFor="confirmPassword" className={styles.formLabel}>
-                                確認密碼 *
+                                {t('signup.form.confirmPasswordLabel')}
                             </label>
                             <div className={styles.passwordInputGroup}>
                                 <input
@@ -508,7 +507,7 @@ export default function RegisterPage() {
                                     value={formData.confirmPassword}
                                     onChange={handleInputChange}
                                     className={`${styles.formInput} ${errors.confirmPassword ? styles.error : ''}`}
-                                    placeholder="請再次輸入密碼"
+                                    placeholder={t('signup.form.confirmPasswordPlaceholder')}
                                     required
                                 />
                                 <button
@@ -535,13 +534,13 @@ export default function RegisterPage() {
                                 required
                             />
                             <label htmlFor="agreeTerms" className={styles.checkboxLabel}>
-                                我已閱讀並同意{' '}
+                                {t('signup.form.agreeTermsPre')}{' '}
                                 <Link href="/terms" className={styles.authLink}>
-                                    使用條款
+                                    {t('signup.form.termsLink')}
                                 </Link>
-                                {' '}和{' '}
+                                {' '}{t('signup.form.andWord')}{' '}
                                 <Link href="/privacy" className={styles.authLink}>
-                                    隱私政策
+                                    {t('signup.form.privacyLink')}
                                 </Link>
                             </label>
                         </div>
@@ -559,7 +558,7 @@ export default function RegisterPage() {
                                 className={styles.checkboxInput}
                             />
                             <label htmlFor="allowMarketing" className={styles.checkboxLabel}>
-                                我同意接收電子報和行銷資訊
+                                {t('signup.form.marketingLabel')}
                             </label>
                         </div>
 
@@ -571,10 +570,10 @@ export default function RegisterPage() {
                             {loading ? (
                                 <>
                                     <span className={styles.loadingSpinner}></span>
-                                    註冊中...
+                                    {t('signup.form.submitLoading')}...
                                 </>
                             ) : (
-                                '註冊帳戶'
+                                t('signup.submit')
                             )}
                         </button>
                     </form>
@@ -582,10 +581,22 @@ export default function RegisterPage() {
                     {/* 頁腳 */}
                     <div className={styles.authFooter}>
                         <p>
-                            已經有帳戶？{' '}
+                            {t('signup.hasAccount')}{' '}
                             <Link href="/login" className={styles.authLink}>
-                                立即登入
+                                {t('signup.loginNow')}
                             </Link>
+                        </p>
+                        <p>
+                            <button
+                                type="button"
+                                className={styles.demoLink}
+                                onClick={() => {
+                                    startDemoSession();
+                                    router.push('/manageCode');
+                                }}
+                            >
+                                {t('signup.demoLogin')}
+                            </button>
                         </p>
                     </div>
                 </div>

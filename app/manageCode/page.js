@@ -1,10 +1,18 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { getAllReports, reactivateCode } from '@/lib/reportStore';
+import { isLoggedIn } from '@/lib/authStore';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
+import DemoTour from '../components/DemoTour';
 import './page.css';
 
 export default function ManageCodePage() {
+    const router = useRouter();
+    const { t } = useLanguage();
+    const [authorized, setAuthorized] = useState(false);
+    const [tourTrigger, setTourTrigger] = useState(0);
     const [showModal, setShowModal] = useState(false);
     const [editingCodeId, setEditingCodeId] = useState(null);
     const [formData, setFormData] = useState({
@@ -24,6 +32,11 @@ export default function ManageCodePage() {
     const [reportRecords, setReportRecords] = useState({});
 
     useEffect(() => {
+        if (!isLoggedIn()) {
+            router.replace('/auth/login');
+            return;
+        }
+        setAuthorized(true);
         setReportRecords(getAllReports());
     }, []);
 
@@ -175,26 +188,24 @@ export default function ManageCodePage() {
     // Toggle code status
     const toggleCode = (codeId) => {
         const code = codes.find(c => c.id === codeId);
-        const action = code?.status === 'active' ? '下架' : '重新上架';
-        
-        if (confirm(`確定要${action}這個邀請碼嗎？`)) {
-            console.log(`${action}邀請碼: ${codeId}`);
-            showAlert(`邀請碼已${action}`, 'success');
+        const isActive = code?.status === 'active';
+        const confirmMsg = isActive ? t('manageCode.alerts.confirmDeactivate') : t('manageCode.alerts.confirmReactivate');
+
+        if (confirm(confirmMsg)) {
+            showAlert(isActive ? t('manageCode.alerts.deactivated') : t('manageCode.alerts.reactivated'), 'success');
         }
     };
 
     // Delete code
     const deleteCode = (codeId) => {
-        if (confirm('確定要刪除這個邀請碼嗎？此操作無法復原。')) {
-            console.log(`刪除邀請碼: ${codeId}`);
-            showAlert('邀請碼已刪除', 'success');
+        if (confirm(t('manageCode.alerts.confirmDelete'))) {
+            showAlert(t('manageCode.alerts.deleted'), 'success');
         }
     };
 
     // Apply filter
     const applyFilter = () => {
-        console.log('應用篩選:', filterData);
-        showAlert('篩選已應用', 'info');
+        showAlert(t('manageCode.alerts.filterApplied'), 'info');
     };
 
     // Form submission
@@ -204,7 +215,7 @@ export default function ManageCodePage() {
         const submitBtn = e.target.querySelector('button[type="submit"]');
         const originalText = submitBtn.textContent;
 
-        submitBtn.textContent = '儲存中...';
+        submitBtn.textContent = t('manageCode.modal.saving');
         submitBtn.disabled = true;
 
         setTimeout(() => {
@@ -213,9 +224,9 @@ export default function ManageCodePage() {
                 if (target?.status === 'suspended') {
                     confirmStillValid(editingCodeId);
                 }
-                showAlert('邀請碼更新成功，已重新上架！', 'success');
+                showAlert(t('manageCode.alerts.updatedSuccess'), 'success');
             } else {
-                showAlert('邀請碼新增成功！', 'success');
+                showAlert(t('manageCode.alerts.addedSuccess'), 'success');
             }
 
             closeModal();
@@ -274,7 +285,7 @@ export default function ManageCodePage() {
     const confirmStillValid = (codeId) => {
         reactivateCode(codeId);
         setReportRecords(getAllReports());
-        showAlert('邀請碼已重新上架！', 'success');
+        showAlert(t('manageCode.alerts.reactivated'), 'success');
     };
 
     // Get status class
@@ -291,46 +302,55 @@ export default function ManageCodePage() {
     // Get status text
     const getStatusText = (status) => {
         switch (status) {
-            case 'active': return '使用中';
-            case 'inactive': return '已下架';
-            case 'reported': return '被檢舉';
-            case 'suspended': return '⚠️ 暫時下架';
+            case 'active': return t('manageCode.status.active');
+            case 'inactive': return t('manageCode.status.inactive');
+            case 'reported': return t('manageCode.status.reported');
+            case 'suspended': return t('manageCode.status.suspended');
             default: return '';
         }
     };
 
+    if (!authorized) return null;
+
     return (
         <div className="manage-container">
+            <DemoTour trigger={tourTrigger} />
+
             {/* 頁面標題 */}
             <div className="manage-header">
-                <h1 className="manage-title">管理我的邀請碼</h1>
-                <button className="add-code-btn" onClick={openAddModal}>
-                    ➕ 新增邀請碼
-                </button>
+                <h1 className="manage-title">{t('manageCode.title')}</h1>
+                <div className="manage-header-actions">
+                    <button className="tutorial-mode-btn" onClick={() => setTourTrigger((n) => n + 1)}>
+                        {t('manageCode.tutorialMode')}
+                    </button>
+                    <button className="add-code-btn" data-tour="add-code" onClick={openAddModal}>
+                        {t('manageCode.addCode')}
+                    </button>
+                </div>
             </div>
 
             {/* 統計摘要 */}
-            <div className="stats-summary">
+            <div className="stats-summary" data-tour="stats">
                 <div className="stats-grid">
                     <div className="stat-item">
                         <div className="stat-number">{codes.length}</div>
-                        <div className="stat-label">總邀請碼數</div>
+                        <div className="stat-label">{t('manageCode.stats.total')}</div>
                     </div>
                     <div className="stat-item">
                         <div className="stat-number">{codes.filter(c => c.status === 'active').length}</div>
-                        <div className="stat-label">使用中</div>
+                        <div className="stat-label">{t('manageCode.stats.active')}</div>
                     </div>
                     <div className="stat-item">
                         <div className="stat-number">{codes.reduce((sum, c) => sum + c.usageCount, 0)}</div>
-                        <div className="stat-label">總使用次數</div>
+                        <div className="stat-label">{t('manageCode.stats.totalUsage')}</div>
                     </div>
                     <div className="stat-item">
                         <div className="stat-number">{codes.filter(c => c.reportCount > 0).length}</div>
-                        <div className="stat-label">有回報紀錄</div>
+                        <div className="stat-label">{t('manageCode.stats.reported')}</div>
                     </div>
                     <div className="stat-item">
                         <div className="stat-number">{codes.filter(c => c.status === 'suspended').length}</div>
-                        <div className="stat-label">暫時下架</div>
+                        <div className="stat-label">{t('manageCode.stats.suspended')}</div>
                     </div>
                 </div>
             </div>
@@ -339,11 +359,11 @@ export default function ManageCodePage() {
             <div className="warning-box">
                 <div className="warning-icon">⚠️</div>
                 <div className="warning-content">
-                    <div className="warning-title">重要提醒</div>
+                    <div className="warning-title">{t('manageCode.warningTitle')}</div>
                     <div className="warning-text">
-                        • 每個平台最多只能新增 2 組邀請碼<br />
-                        • 邀請碼累積 5 人回報後將暫時下架，請確認後重新上架<br />
-                        • 設置越多不同平台的邀請碼，被推薦的機率越高
+                        {t('manageCode.warningLines').map((line, i) => (
+                            <span key={i}>• {line}<br /></span>
+                        ))}
                     </div>
                 </div>
             </div>
@@ -352,46 +372,46 @@ export default function ManageCodePage() {
             <div className="filter-section">
                 <div className="filter-controls">
                     <div className="filter-group">
-                        <label className="filter-label">搜尋平台</label>
-                        <input 
-                            type="text" 
-                            className="filter-input" 
+                        <label className="filter-label">{t('manageCode.filter.searchLabel')}</label>
+                        <input
+                            type="text"
+                            className="filter-input"
                             name="searchPlatform"
                             value={filterData.searchPlatform}
                             onChange={handleFilterChange}
-                            placeholder="輸入平台名稱..."
+                            placeholder={t('manageCode.filter.searchPlaceholder')}
                         />
                     </div>
                     <div className="filter-group">
-                        <label className="filter-label">狀態</label>
-                        <select 
-                            className="filter-select" 
+                        <label className="filter-label">{t('manageCode.filter.statusLabel')}</label>
+                        <select
+                            className="filter-select"
                             name="filterStatus"
                             value={filterData.filterStatus}
                             onChange={handleFilterChange}
                         >
-                            <option value="">全部狀態</option>
-                            <option value="active">使用中</option>
-                            <option value="inactive">已下架</option>
-                            <option value="reported">被檢舉</option>
+                            <option value="">{t('manageCode.filter.statusAll')}</option>
+                            <option value="active">{t('manageCode.filter.statusActive')}</option>
+                            <option value="inactive">{t('manageCode.filter.statusInactive')}</option>
+                            <option value="reported">{t('manageCode.filter.statusReported')}</option>
                         </select>
                     </div>
                     <div className="filter-group">
-                        <label className="filter-label">排序</label>
-                        <select 
-                            className="filter-select" 
+                        <label className="filter-label">{t('manageCode.filter.sortLabel')}</label>
+                        <select
+                            className="filter-select"
                             name="sortBy"
                             value={filterData.sortBy}
                             onChange={handleFilterChange}
                         >
-                            <option value="created_desc">建立時間 (新到舊)</option>
-                            <option value="created_asc">建立時間 (舊到新)</option>
-                            <option value="usage_desc">使用次數 (高到低)</option>
-                            <option value="usage_asc">使用次數 (低到高)</option>
+                            <option value="created_desc">{t('manageCode.filter.sortCreatedDesc')}</option>
+                            <option value="created_asc">{t('manageCode.filter.sortCreatedAsc')}</option>
+                            <option value="usage_desc">{t('manageCode.filter.sortUsageDesc')}</option>
+                            <option value="usage_asc">{t('manageCode.filter.sortUsageAsc')}</option>
                         </select>
                     </div>
                     <div className="filter-group">
-                        <button className="filter-btn" onClick={applyFilter}>篩選</button>
+                        <button className="filter-btn" onClick={applyFilter}>{t('manageCode.filter.apply')}</button>
                     </div>
                 </div>
             </div>
@@ -409,7 +429,7 @@ export default function ManageCodePage() {
 
                         {code.status === 'suspended' && (
                             <div className="suspended-notice">
-                                此邀請碼已累積 5 人回報無法使用，請確認後重新上架
+                                {t('manageCode.suspendedNotice')}
                             </div>
                         )}
 
@@ -418,35 +438,35 @@ export default function ManageCodePage() {
                         <div className="code-info">
                             <div className="info-item">
                                 <div className="info-number">{code.usageCount}</div>
-                                <div className="info-label">使用次數</div>
+                                <div className="info-label">{t('manageCode.info.usageCount')}</div>
                             </div>
                             <div className="info-item">
                                 <div className="info-number" style={{ color: code.reportCount >= 5 ? '#dc3545' : code.reportCount > 0 ? '#f08030' : undefined }}>
                                     {code.reportCount}
                                 </div>
-                                <div className="info-label">回報次數</div>
+                                <div className="info-label">{t('manageCode.info.reportCount')}</div>
                             </div>
                             <div className="info-item">
                                 <div className="info-number">{code.daysCreated}</div>
-                                <div className="info-label">天前建立</div>
+                                <div className="info-label">{t('manageCode.info.daysCreated')}</div>
                             </div>
                             <div className="info-item">
                                 <div className="info-number">{code.lastUsed}</div>
-                                <div className="info-label">最後使用</div>
+                                <div className="info-label">{t('manageCode.info.lastUsed')}</div>
                             </div>
                         </div>
 
                         {code.reports.length > 0 && (
                             <div className="report-section">
                                 <button className="report-toggle-btn" onClick={() => toggleReports(code.id)}>
-                                    {expandedReports[code.id] ? '▲' : '▼'} 查看回報原因（{code.reports.length} 筆）
+                                    {expandedReports[code.id] ? '▲' : '▼'} {t('manageCode.alerts.viewReports', { count: code.reports.length })}
                                 </button>
                                 {expandedReports[code.id] && (
                                     <div className="report-list">
                                         {code.reports.map((r, i) => (
                                             <div key={i} className="report-item">
                                                 <span className="report-time">{new Date(r.reportedAt).toLocaleDateString('zh-TW')}</span>
-                                                <span className="report-reason">{r.reason || '（未填寫原因）'}</span>
+                                                <span className="report-reason">{r.reason || t('manageCode.alerts.noReportReason')}</span>
                                             </div>
                                         ))}
                                     </div>
@@ -454,24 +474,24 @@ export default function ManageCodePage() {
                             </div>
                         )}
 
-                        <div className="code-actions">
+                        <div className="code-actions" data-tour="actions">
                             <button className="action-btn btn-edit" onClick={() => { editCode(code.id); if (code.status === 'suspended') confirmStillValid(code.id); }}>
-                                編輯
+                                {t('manageCode.actions.edit')}
                             </button>
                             {code.status === 'suspended' ? (
                                 <button className="action-btn btn-toggle" onClick={() => confirmStillValid(code.id)}>
-                                    確認仍有效
+                                    {t('manageCode.actions.confirmValid')}
                                 </button>
                             ) : (
                                 <button
                                     className={`action-btn btn-toggle ${code.status === 'active' ? 'deactivate' : ''}`}
                                     onClick={() => toggleCode(code.id)}
                                 >
-                                    {code.status === 'active' ? '下架' : '重新上架'}
+                                    {code.status === 'active' ? t('manageCode.actions.deactivate') : t('manageCode.actions.reactivate')}
                                 </button>
                             )}
                             <button className="action-btn btn-delete" onClick={() => deleteCode(code.id)}>
-                                刪除
+                                {t('manageCode.actions.delete')}
                             </button>
                         </div>
                     </div>
@@ -483,24 +503,24 @@ export default function ManageCodePage() {
                 <div className="modal-content">
                     <div className="modal-header">
                         <h2 className="modal-title">
-                            {editingCodeId ? '編輯邀請碼' : '新增邀請碼'}
+                            {editingCodeId ? t('manageCode.modal.editTitle') : t('manageCode.modal.addTitle')}
                         </h2>
                         <button className="close-btn" onClick={closeModal}>&times;</button>
                     </div>
-                    
+
                     <form className="modal-form" onSubmit={handleSubmit}>
 
                         {editingCodeId ? (
                             /* 編輯模式：平台固定不可更改 */
                             <div className="form-group">
-                                <label className="form-label">平台名稱</label>
+                                <label className="form-label">{t('manageCode.modal.platformLabel')}</label>
                                 <div className="form-static">{formData.platform}</div>
                             </div>
                         ) : (
                             /* 新增模式：可選擇平台 */
                             <>
                                 <div className="form-group">
-                                    <label className="form-label" htmlFor="platform">平台名稱 *</label>
+                                    <label className="form-label" htmlFor="platform">{t('manageCode.modal.platformRequired')}</label>
                                     <select
                                         className="form-select"
                                         name="platform"
@@ -508,7 +528,7 @@ export default function ManageCodePage() {
                                         onChange={handlePlatformChange}
                                         required
                                     >
-                                        <option value="">請選擇平台</option>
+                                        <option value="">{t('manageCode.modal.platformPlaceholder')}</option>
                                         <option value="Foodpanda">Foodpanda</option>
                                         <option value="Uber">Uber</option>
                                         <option value="Ubereats">Uber Eats</option>
@@ -517,57 +537,57 @@ export default function ManageCodePage() {
                                         <option value="環保集點">環保集點</option>
                                         <option value="蝦皮購物">蝦皮購物</option>
                                         <option value="Agoda">Agoda</option>
-                                        <option value="other">其他 (請在下方說明)</option>
+                                        <option value="other">{t('manageCode.modal.other')}</option>
                                     </select>
-                                    <div className="form-help">每個平台最多只能新增 2 組邀請碼</div>
+                                    <div className="form-help">{t('manageCode.modal.platformHelp')}</div>
                                 </div>
 
                                 {showCustomPlatform && (
                                     <div className="form-group">
-                                        <label className="form-label" htmlFor="customPlatform">自訂平台名稱 *</label>
+                                        <label className="form-label" htmlFor="customPlatform">{t('manageCode.modal.customPlatformLabel')}</label>
                                         <input
                                             type="text"
                                             className="form-input"
                                             name="customPlatform"
                                             value={formData.customPlatform}
                                             onChange={handleInputChange}
-                                            placeholder="請輸入平台名稱"
+                                            placeholder={t('manageCode.modal.customPlatformPlaceholder')}
                                             required={showCustomPlatform}
                                         />
-                                        <div className="form-help">新平台需要管理員審核後才會顯示</div>
+                                        <div className="form-help">{t('manageCode.modal.customPlatformHelp')}</div>
                                     </div>
                                 )}
                             </>
                         )}
 
                         <div className="form-group">
-                            <label className="form-label" htmlFor="inviteCode">邀請碼 *</label>
+                            <label className="form-label" htmlFor="inviteCode">{t('manageCode.modal.codeLabel')}</label>
                             <input
                                 type="text"
                                 className="form-input"
                                 name="inviteCode"
                                 value={formData.inviteCode}
                                 onChange={handleInviteCodeChange}
-                                placeholder="請輸入邀請碼"
+                                placeholder={t('manageCode.modal.codePlaceholder')}
                                 required
                             />
-                            <div className="form-help">通常為 6-10 位英數字組合，不含特殊符號</div>
+                            <div className="form-help">{t('manageCode.modal.codeHelp')}</div>
                         </div>
 
                         <div className="form-group">
-                            <label className="form-label" htmlFor="description">更新活動資訊 (選填)</label>
+                            <label className="form-label" htmlFor="description">{t('manageCode.modal.descLabel')}</label>
                             <textarea
                                 className="form-input"
                                 name="description"
                                 value={formData.description}
                                 onChange={handleInputChange}
                                 rows="3"
-                                placeholder="描述優惠內容或使用方式，例如：新用戶首單折 $150..."
+                                placeholder={t('manageCode.modal.descPlaceholder')}
                             />
                         </div>
 
                         <div className="form-group">
-                            <label className="form-label" htmlFor="expiryDate">有效期限 (選填)</label>
+                            <label className="form-label" htmlFor="expiryDate">{t('manageCode.modal.expiryLabel')}</label>
                             <input
                                 type="date"
                                 className="form-input"
@@ -575,15 +595,15 @@ export default function ManageCodePage() {
                                 value={formData.expiryDate}
                                 onChange={handleInputChange}
                             />
-                            <div className="form-help">不填寫表示沒有期限</div>
+                            <div className="form-help">{t('manageCode.modal.expiryHelp')}</div>
                         </div>
 
                         <div className="form-buttons">
                             <button type="button" className="btn btn-secondary" onClick={closeModal}>
-                                取消
+                                {t('manageCode.modal.cancel')}
                             </button>
                             <button type="submit" className="btn btn-primary">
-                                {editingCodeId ? '確認送出' : '新增邀請碼'}
+                                {editingCodeId ? t('manageCode.modal.submitEdit') : t('manageCode.modal.submitAdd')}
                             </button>
                         </div>
                     </form>

@@ -1,4 +1,4 @@
-﻿/* 管理邀請碼 CSS - managecodepage.css */
+/* 管理邀請碼 CSS - managecodepage.css */
 
 .manage-container {
     background: white;
@@ -22,6 +22,31 @@
     gap: 15px;
 }
 
+.manage-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.tutorial-mode-btn {
+    background: #FFF6DE;
+    color: #8a6400;
+    border: 1.5px solid #FFB703;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tutorial-mode-btn:hover {
+    background: #FFB703;
+    color: #023047;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 183, 3, 0.35);
+}
+
 .manage-title {
     font-size: 28px;
     font-weight: bold;
@@ -29,7 +54,7 @@
 }
 
 .add-code-btn {
-    background: #d98b18;
+    background: #0077A0;
     color: white;
     border: none;
     padding: 12px 25px;
@@ -44,9 +69,9 @@
 }
 
 .add-code-btn:hover {
-    background: #ad6810;
+    background: #0091AD;
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(217, 139, 24, 0.4);
+    box-shadow: 0 5px 15px rgba(0, 145, 173, 0.4);
 }
 
 /* 篩選和搜尋區域 */
@@ -88,12 +113,12 @@
 .filter-input:focus,
 .filter-select:focus {
     outline: none;
-    border-color: #d98b18;
-    box-shadow: 0 0 0 2px rgba(217, 139, 24, 0.1);
+    border-color: #0077A0;
+    box-shadow: 0 0 0 2px rgba(0, 145, 173, 0.1);
 }
 
 .filter-btn {
-    background: #d98b18;
+    background: #0077A0;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -103,7 +128,7 @@
 }
 
 .filter-btn:hover {
-    background: #ad6810;
+    background: #0091AD;
 }
 
 /* 邀請碼列表 */
@@ -124,7 +149,7 @@
 .code-card:hover {
     transform: translateY(-2px);
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    border-color: #d98b18;
+    border-color: #0077A0;
 }
 
 .code-card.inactive {
@@ -191,7 +216,7 @@
 .info-number {
     font-size: 24px;
     font-weight: bold;
-    color: #d98b18;
+    color: #0077A0;
     margin-bottom: 5px;
 }
 
@@ -233,23 +258,23 @@
 }
 
 .btn-edit {
-    background: #d98b18;
+    background: #0077A0;
     color: white;
-    border: 2px solid #d98b18;
+    border: 2px solid #00B4D8;
 }
 
 .btn-edit:hover {
-    background: #ad6810;
+    background: #0091AD;
 }
 
 .btn-toggle {
     background: transparent;
-    color: #d98b18;
-    border: 2px solid #d98b18;
+    color: #0077A0;
+    border: 2px solid #00B4D8;
 }
 
 .btn-toggle:hover {
-    background: #d98b18;
+    background: #0077A0;
     color: white;
 }
 
@@ -375,9 +400,9 @@
 .form-input:focus,
 .form-select:focus {
     outline: none;
-    border-color: #d98b18;
+    border-color: #0077A0;
     background: white;
-    box-shadow: 0 0 0 3px rgba(217, 139, 24, 0.1);
+    box-shadow: 0 0 0 3px rgba(0, 145, 173, 0.1);
 }
 
 .form-help {
@@ -406,24 +431,24 @@
 }
 
 .btn-primary {
-    background: #d98b18;
+    background: #0077A0;
     color: white;
-    border-color: #d98b18;
+    border-color: #0077A0;
 }
 
 .btn-primary:hover {
-    background: #ad6810;
+    background: #0091AD;
     transform: translateY(-2px);
 }
 
 .btn-secondary {
     background: transparent;
-    color: #d98b18;
-    border-color: #d98b18;
+    color: #0077A0;
+    border-color: #0077A0;
 }
 
 .btn-secondary:hover {
-    background: #d98b18;
+    background: #0077A0;
     color: white;
 }
 
@@ -512,7 +537,7 @@
 .stat-number {
     font-size: 24px;
     font-weight: bold;
-    color: #d98b18;
+    color: #0077A0;
     margin-bottom: 5px;
 }
 
