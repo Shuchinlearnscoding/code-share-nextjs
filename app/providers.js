@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { NeonAuthUIProvider } from '@neondatabase/auth-ui';
 import { authClient } from '@/lib/auth-client';
+import { neonAuthLocalizationZhTW } from '@/lib/neonAuthLocalization';
 
 export default function Providers({ children }) {
   const router = useRouter();
@@ -15,6 +16,7 @@ export default function Providers({ children }) {
       replace={router.replace}
       onSessionChange={() => router.refresh()}
       redirectTo="/"
+      localization={neonAuthLocalizationZhTW}
       viewPaths={{
         SIGN_IN: 'login',
         SIGN_UP: 'signup',
