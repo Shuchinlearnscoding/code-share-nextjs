@@ -4,6 +4,20 @@ import { Suspense, useState } from 'react';
 import { useUser } from '@stackframe/stack';
 import './page.css';
 
+function isClientAuthConfigured() {
+    const projectId = process.env.NEXT_PUBLIC_STACK_PROJECT_ID;
+    return Boolean(projectId && projectId !== '123e4567-e89b-42d3-a456-426614174000');
+}
+
+function AuthUnavailable() {
+    return (
+        <div className="profile-container">
+            <h1 className="page-title">會員功能暫時無法使用</h1>
+            <p>會員資料功能正在整理中，請稍後再試。</p>
+        </div>
+    );
+}
+
 function ProfileEditContent() {
     const user = useUser({ or: 'redirect' });
     const [formData, setFormData] = useState({
@@ -402,6 +416,10 @@ function ProfileEditContent() {
 }
 
 export default function ProfileEditPage() {
+    if (!isClientAuthConfigured()) {
+        return <AuthUnavailable />;
+    }
+
     return (
         <Suspense fallback={null}>
             <ProfileEditContent />

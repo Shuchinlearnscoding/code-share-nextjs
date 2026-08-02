@@ -1,6 +1,11 @@
-import { stackServerApp } from '@/lib/stack';
+import { redirect } from 'next/navigation';
+import { isStackAuthConfigured, stackServerApp } from '@/lib/stack';
 
 export default async function AdminPage() {
+  if (!isStackAuthConfigured()) {
+    redirect('/auth-unavailable');
+  }
+
   await stackServerApp.getUser({ or: 'redirect' });
 
   return (

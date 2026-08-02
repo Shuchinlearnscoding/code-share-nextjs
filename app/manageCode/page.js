@@ -5,6 +5,20 @@ import { useUser } from '@stackframe/stack';
 import { getAllReports, reactivateCode } from '@/lib/reportStore';
 import './page.css';
 
+function isClientAuthConfigured() {
+    const projectId = process.env.NEXT_PUBLIC_STACK_PROJECT_ID;
+    return Boolean(projectId && projectId !== '123e4567-e89b-42d3-a456-426614174000');
+}
+
+function AuthUnavailable() {
+    return (
+        <div className="manage-container">
+            <h1 className="page-title">會員功能暫時無法使用</h1>
+            <p>邀請碼管理功能正在整理中，請稍後再試。</p>
+        </div>
+    );
+}
+
 function ManageCodeContent() {
     useUser({ or: 'redirect' });
     const [showModal, setShowModal] = useState(false);
@@ -577,6 +591,10 @@ function ManageCodeContent() {
 }
 
 export default function ManageCodePage() {
+    if (!isClientAuthConfigured()) {
+        return <AuthUnavailable />;
+    }
+
     return (
         <Suspense fallback={null}>
             <ManageCodeContent />

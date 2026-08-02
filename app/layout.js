@@ -3,7 +3,7 @@ import { Suspense } from 'react'
 import Header from './components/header'
 import Footer from './components/footer'
 import { StackProvider } from '@stackframe/stack'
-import { stackServerApp } from '@/lib/stack'
+import { isStackAuthConfigured, stackServerApp } from '@/lib/stack'
 
 export const metadata = {
   title: {
@@ -14,18 +14,27 @@ export const metadata = {
 }
 
 export default function RootLayout({ children }) {
+  const authEnabled = isStackAuthConfigured()
+  const content = (
+    <>
+      <Suspense fallback={<div className="header-placeholder" />}>
+        <Header authEnabled={authEnabled} />
+      </Suspense>
+      <main className="main-container">
+        {children}
+      </main>
+      <Footer />
+    </>
+  )
+
   return (
     <html lang="zh-TW">
       <body>
-        <StackProvider app={stackServerApp}>
-          <Suspense fallback={<div className="header-placeholder" />}>
-            <Header />
-          </Suspense>
-          <main className="main-container">
-            {children}
-          </main>
-          <Footer />
-        </StackProvider>
+        {authEnabled ? (
+          <StackProvider app={stackServerApp}>{content}</StackProvider>
+        ) : (
+          content
+        )}
       </body>
     </html>
   )

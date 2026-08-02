@@ -5,10 +5,45 @@ import { useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { UserButton, useUser } from '@stackframe/stack'
 
-export default function Header() {
+function AuthButtons() {
+  const user = useUser()
+
+  if (user) {
+    return (
+      <div className="auth-buttons">
+        <UserButton />
+      </div>
+    )
+  }
+
+  return (
+    <div className="auth-buttons">
+      <Link href="/handler/sign-in" className="btn-login">
+        登入
+      </Link>
+      <Link href="/handler/sign-up" className="btn-register">
+        註冊
+      </Link>
+    </div>
+  )
+}
+
+function AuthSetupButtons() {
+  return (
+    <div className="auth-buttons">
+      <Link href="/handler/sign-in" className="btn-login">
+        登入
+      </Link>
+      <Link href="/handler/sign-up" className="btn-register">
+        註冊
+      </Link>
+    </div>
+  )
+}
+
+export default function Header({ authEnabled = false }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const pathname = usePathname()
-  const user = useUser()
 
   return (
     <header className="header">
@@ -60,20 +95,7 @@ export default function Header() {
             </li>
           </ul>
           
-          {user ? (
-            <div className="auth-buttons">
-              <UserButton />
-            </div>
-          ) : (
-            <div className="auth-buttons">
-              <Link href="/handler/sign-in" className="btn-login">
-                登入
-              </Link>
-              <Link href="/handler/sign-up" className="btn-register">
-                註冊
-              </Link>
-            </div>
-          )}
+          {authEnabled ? <AuthButtons /> : <AuthSetupButtons />}
         </nav>
       </div>
     </header>
