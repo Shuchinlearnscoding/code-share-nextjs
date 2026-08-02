@@ -7,7 +7,7 @@ export async function GET(request) {
   const query = searchParams.get('q');
   const excludeIds = searchParams.get('excludeIds')?.split(',').filter(Boolean) || [];
 
-  const match = matchReferralCode({ platformId, query, excludeIds });
+  const match = await matchReferralCode({ platformId, query, excludeIds });
 
   if (!match) {
     return NextResponse.json(

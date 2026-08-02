@@ -11,8 +11,8 @@ export async function GET(request) {
   const popularOnly = searchParams.get('popularOnly') === 'true';
 
   return NextResponse.json({
-    metadata: getReferralMetadata(),
-    categories: listReferralCategories(),
-    platforms: listReferralPlatforms({ includeWanted, popularOnly }),
+    metadata: await getReferralMetadata(),
+    categories: await listReferralCategories(),
+    platforms: await listReferralPlatforms({ includeWanted, popularOnly }),
   });
 }
