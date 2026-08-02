@@ -8,8 +8,8 @@ This repository is currently a Next.js front-end prototype. Several routes and U
 
 Important current limitations:
 
-- Login and signup are not backed by a complete auth system.
-- Member-only pages currently use mock data and are not protected.
+- Neon Auth is wired, but real Neon Auth project keys still need to be configured in local and Vercel environments.
+- Member-only pages are protected, but profile and invite-code management data still use mock client state.
 - Invite-code CRUD actions are simulated and do not persist.
 - Reports are stored locally or treated as non-persistent events.
 - The admin route exists but is not implemented.
@@ -97,6 +97,9 @@ The future backend work should use environment variables like:
 
 ```bash
 DATABASE_URL=
+NEXT_PUBLIC_STACK_PROJECT_ID=
+NEXT_PUBLIC_STACK_PUBLISHABLE_CLIENT_KEY=
+STACK_SECRET_SERVER_KEY=
 ```
 
 Production values should be configured in Vercel project settings.

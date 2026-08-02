@@ -1,10 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { Suspense, useState, useEffect } from 'react';
+import { useUser } from '@stackframe/stack';
 import { getAllReports, reactivateCode } from '@/lib/reportStore';
 import './page.css';
 
-export default function ManageCodePage() {
+function ManageCodeContent() {
+    useUser({ or: 'redirect' });
     const [showModal, setShowModal] = useState(false);
     const [editingCodeId, setEditingCodeId] = useState(null);
     const [formData, setFormData] = useState({
@@ -571,5 +573,13 @@ export default function ManageCodePage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function ManageCodePage() {
+    return (
+        <Suspense fallback={null}>
+            <ManageCodeContent />
+        </Suspense>
     );
 }

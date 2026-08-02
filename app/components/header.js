@@ -3,10 +3,12 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { usePathname } from 'next/navigation'
+import { UserButton, useUser } from '@stackframe/stack'
 
 export default function Header() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const pathname = usePathname()
+  const user = useUser()
 
   return (
     <header className="header">
@@ -58,14 +60,20 @@ export default function Header() {
             </li>
           </ul>
           
-          <div className="auth-buttons">
-            <Link href="/auth/login" className="btn-login">
-              登入
-            </Link>
-            <Link href="/auth/signup" className="btn-register">
-              註冊
-            </Link>
-          </div>
+          {user ? (
+            <div className="auth-buttons">
+              <UserButton />
+            </div>
+          ) : (
+            <div className="auth-buttons">
+              <Link href="/handler/sign-in" className="btn-login">
+                登入
+              </Link>
+              <Link href="/handler/sign-up" className="btn-register">
+                註冊
+              </Link>
+            </div>
+          )}
         </nav>
       </div>
     </header>

@@ -53,11 +53,12 @@
 | --- | --- | --- |
 | `/` | 首頁、搜尋邀請碼、熱門平台、隨機配對 | 前端 mock data |
 | `/aboutUs` | 品牌故事、特色、統計、團隊、聯絡方式 | 靜態內容與動畫 |
-| `/profile` | 會員資料、統計、通知、隱私、社交綁定 | 前端 mock data |
-| `/manageCode` | 會員邀請碼管理、新增/編輯彈窗、篩選 | 前端 mock data |
-| `/auth/login` | 電子郵件登入、社交登入、忘記密碼 | 使用 next-auth 呼叫但缺後端設定 |
-| `/auth/signup` | 註冊、密碼強度、社交註冊 | 呼叫 `/api/auth/register` 但 API 尚未建立 |
-| `/admin` | 管理員後台 | 空頁面 |
+| `/profile` | 會員資料、統計、通知、隱私、社交綁定 | Neon Auth 保護；內容仍為前端 mock data |
+| `/manageCode` | 會員邀請碼管理、新增/編輯彈窗、篩選 | Neon Auth 保護；CRUD 仍為前端 mock data |
+| `/auth/login` | 舊登入入口 | Redirect 到 `/handler/sign-in` |
+| `/auth/signup` | 舊註冊入口 | Redirect 到 `/handler/sign-up` |
+| `/handler/[[...stack]]` | Neon Auth / Stack Auth handler pages | 已接入；需設定正式 env |
+| `/admin` | 管理員後台 | 已要求登入；尚未實作 admin 角色與功能 |
 
 ## 6. Functional Requirements
 
@@ -367,10 +368,8 @@
 
 ## 13. Known Gaps In Current Repo
 
-- `next-auth` is imported but no NextAuth route/config is present.
-- `/api/auth/register` and `/api/auth/forgot-password` are referenced but not implemented.
-- Login and signup footer links point to `/login` and `/register`, while actual routes are `/auth/login` and `/auth/signup`.
-- `/admin` is currently empty.
+- Neon Auth env vars must be configured before real login/signup can work.
+- `/admin` currently requires login but does not yet check an admin role.
 - Invite code data is mocked in client components.
 - Profile data and statistics are mocked.
 - Filtering in `manageCode` currently shows an alert but does not filter the list.

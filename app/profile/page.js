@@ -1,12 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
+import { useUser } from '@stackframe/stack';
 import './page.css';
 
-export default function ProfileEditPage() {
+function ProfileEditContent() {
+    const user = useUser({ or: 'redirect' });
     const [formData, setFormData] = useState({
-        email: 'user@example.com',
-        nickname: '邀請碼達人',
+        email: user.primaryEmail || '',
+        nickname: user.displayName || '邀請碼達人',
         phone: '0912345678',
         birthday: '1990-01-01',
         gender: 'female',
@@ -396,5 +398,13 @@ export default function ProfileEditPage() {
                 </div>
             </form>
         </div>
+    );
+}
+
+export default function ProfileEditPage() {
+    return (
+        <Suspense fallback={null}>
+            <ProfileEditContent />
+        </Suspense>
     );
 }

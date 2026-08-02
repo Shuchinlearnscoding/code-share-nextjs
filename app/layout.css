@@ -39,6 +39,10 @@ body {
     box-shadow: 0 4px 18px rgba(7, 89, 133, 0.06);
 }
 
+.header-placeholder {
+    height: 80px;
+}
+
 .header-container {
     max-width: 1200px;
     margin: 0 auto;

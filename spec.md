@@ -89,35 +89,36 @@
 
 ---
 
-## 9. 登入 / 註冊功能完全無法運作（最高優先）
+## 9. 登入 / 註冊功能完全無法運作（最高優先） ✅ 已改接 Neon Auth
 
-**問題**：登入頁呼叫 `next-auth` 的 `signIn('credentials', ...)`，但專案中沒有建立 `/api/auth/[...nextauth]` 路由，導致所有登入請求（帳密登入、Google/Facebook/LINE 社群登入）都會打到不存在的 API，實測 console 直接出現：
+**原問題**：登入頁呼叫 `next-auth` 的 `signIn('credentials', ...)`，但專案中沒有建立 `/api/auth/[...nextauth]` 路由，導致所有登入請求（帳密登入、Google/Facebook/LINE 社群登入）都會打到不存在的 API，實測 console 直接出現：
 ```
 [next-auth][error][CLIENT_FETCH_ERROR] Unexpected token '<', "<!DOCTYPE "...
 ```
-也就是說整個帳號系統目前是不通的，第 6、7、8 項的許多修法都依賴這個系統先建好。
+目前已移除 `next-auth`，改用 Neon Auth / Stack Auth：
 
 **檔案**：
 - [app/auth/login/page.js](app/auth/login/page.js)
 - [app/auth/signup/page.js](app/auth/signup/page.js)
-- 缺少：`app/api/auth/[...nextauth]/route.js`
+- [app/handler/[[...stack]]/page.js](app/handler/[[...stack]]/page.js)
+- [lib/stack.js](lib/stack.js)
 
-**修法**：
-1. 建立 NextAuth 設定與 API route，決定要用 Credentials provider（需搭配使用者資料庫與密碼雜湊）還是社群登入（Google/Facebook/LINE OAuth，需申請對應的 Client ID/Secret）。
-2. 建立使用者資料表（email、密碼雜湊、暱稱等），註冊頁需真正建立帳號。
-3. 登入成功後的 session 要能被第 6 項的權限保護、第 7 項的邀請碼歸屬使用。
+**後續待辦**：
+1. 在 Neon Auth 建立正式專案並設定 `NEXT_PUBLIC_STACK_PROJECT_ID`、`NEXT_PUBLIC_STACK_PUBLISHABLE_CLIENT_KEY`、`STACK_SECRET_SERVER_KEY`。
+2. 將 `profile` 與 `manageCode` 的假資料改接登入使用者資料。
+3. 補上會員角色 / admin 角色判斷，讓 `/admin` 不只是「已登入即可進入」。
 
 ---
 
 ## 建議修復順序
 
 1. ~~歡迎回來標題顏色~~（已完成）
-2. 忘記密碼假成功訊息
-3. 登入頁連結路徑修正
+2. ~~忘記密碼假成功訊息~~（改由 Neon Auth handler 處理）
+3. ~~登入頁連結路徑修正~~（改導向 `/handler/sign-in` / `/handler/sign-up`）
 4. `/admin` 空頁面處理（移除或列入後續規劃）
 5. lockfile 警告清理
-6. **登入系統建置**（第 9 項，優先做，因為後面項目都依賴它）
-7. 會員頁面登入保護
+6. ~~登入系統建置~~（已改接 Neon Auth，待設定正式 env）
+7. ~~會員頁面登入保護~~（已加上 session guard，待接真實資料）
 8. 管理邀請碼真實 CRUD
 9. 檢舉機制改為伺服器端儲存
 

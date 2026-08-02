@@ -1,6 +1,9 @@
 import './layout.css'
+import { Suspense } from 'react'
 import Header from './components/header'
 import Footer from './components/footer'
+import { StackProvider } from '@stackframe/stack'
+import { stackServerApp } from '@/lib/stack'
 
 export const metadata = {
   title: {
@@ -14,11 +17,15 @@ export default function RootLayout({ children }) {
   return (
     <html lang="zh-TW">
       <body>
-        <Header />
-        <main className="main-container">
-          {children}
-        </main>
-        <Footer />
+        <StackProvider app={stackServerApp}>
+          <Suspense fallback={<div className="header-placeholder" />}>
+            <Header />
+          </Suspense>
+          <main className="main-container">
+            {children}
+          </main>
+          <Footer />
+        </StackProvider>
       </body>
     </html>
   )
