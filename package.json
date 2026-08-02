@@ -9,8 +9,9 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@neondatabase/auth": "^0.4.2-beta",
+    "@neondatabase/auth-ui": "^0.2.1-beta",
     "@neondatabase/serverless": "^1.1.0",
-    "@stackframe/stack": "^2.8.108",
     "next": "15.5.3",
     "react": "19.1.0",
     "react-dom": "19.1.0"

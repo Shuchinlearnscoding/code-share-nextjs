@@ -1,10 +1,11 @@
-import { redirect } from 'next/navigation';
-import { isStackAuthConfigured } from '@/lib/stack';
+'use client';
+
+import { AuthView } from '@neondatabase/auth-ui';
 
 export default function LoginPage() {
-  if (!isStackAuthConfigured()) {
-    redirect('/auth-unavailable');
-  }
-
-  redirect('/handler/sign-in');
+  return (
+    <section style={{ maxWidth: 460, margin: '40px auto' }}>
+      <AuthView view="SIGN_IN" redirectTo="/" />
+    </section>
+  );
 }

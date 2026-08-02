@@ -1,12 +1,13 @@
 import { redirect } from 'next/navigation';
-import { isStackAuthConfigured, stackServerApp } from '@/lib/stack';
+import { auth } from '@/lib/auth';
+
+export const dynamic = 'force-dynamic';
 
 export default async function AdminPage() {
-  if (!isStackAuthConfigured()) {
-    redirect('/auth-unavailable');
+  const { data: session } = await auth.getSession();
+  if (!session?.user) {
+    redirect('/auth/login');
   }
-
-  await stackServerApp.getUser({ or: 'redirect' });
 
   return (
     <div>

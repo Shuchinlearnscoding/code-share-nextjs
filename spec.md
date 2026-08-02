@@ -100,11 +100,12 @@
 **檔案**：
 - [app/auth/login/page.js](app/auth/login/page.js)
 - [app/auth/signup/page.js](app/auth/signup/page.js)
-- [app/handler/[[...stack]]/page.js](app/handler/[[...stack]]/page.js)
-- [lib/stack.js](lib/stack.js)
+- [app/api/auth/[...path]/route.js](app/api/auth/[...path]/route.js)
+- [lib/auth.js](lib/auth.js)
+- [lib/auth-client.js](lib/auth-client.js)
 
 **後續待辦**：
-1. 在 Neon Auth 建立正式專案並設定 `NEXT_PUBLIC_STACK_PROJECT_ID`、`NEXT_PUBLIC_STACK_PUBLISHABLE_CLIENT_KEY`、`STACK_SECRET_SERVER_KEY`。
+1. 在本機與 Vercel 設定 `NEON_AUTH_BASE_URL` 與 `NEON_AUTH_COOKIE_SECRET`。
 2. 將 `profile` 與 `manageCode` 的假資料改接登入使用者資料。
 3. 補上會員角色 / admin 角色判斷，讓 `/admin` 不只是「已登入即可進入」。
 
@@ -114,7 +115,7 @@
 
 1. ~~歡迎回來標題顏色~~（已完成）
 2. ~~忘記密碼假成功訊息~~（改由 Neon Auth handler 處理）
-3. ~~登入頁連結路徑修正~~（改導向 `/handler/sign-in` / `/handler/sign-up`）
+3. ~~登入頁連結路徑修正~~（改接 `/auth/login` / `/auth/signup`）
 4. `/admin` 空頁面處理（移除或列入後續規劃）
 5. lockfile 警告清理
 6. ~~登入系統建置~~（已改接 Neon Auth，待設定正式 env）

@@ -55,9 +55,9 @@
 | `/aboutUs` | 品牌故事、特色、統計、團隊、聯絡方式 | 靜態內容與動畫 |
 | `/profile` | 會員資料、統計、通知、隱私、社交綁定 | Neon Auth 保護；內容仍為前端 mock data |
 | `/manageCode` | 會員邀請碼管理、新增/編輯彈窗、篩選 | Neon Auth 保護；CRUD 仍為前端 mock data |
-| `/auth/login` | 舊登入入口 | Redirect 到 `/handler/sign-in` |
-| `/auth/signup` | 舊註冊入口 | Redirect 到 `/handler/sign-up` |
-| `/handler/[[...stack]]` | Neon Auth / Stack Auth handler pages | 已接入；需設定正式 env |
+| `/auth/login` | 登入入口 | Neon Auth 登入頁 |
+| `/auth/signup` | 註冊入口 | Neon Auth 註冊頁 |
+| `/api/auth/[...path]` | Neon Auth API proxy | 已接入 |
 | `/admin` | 管理員後台 | 已要求登入；尚未實作 admin 角色與功能 |
 
 ## 6. Functional Requirements

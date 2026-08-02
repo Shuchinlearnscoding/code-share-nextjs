@@ -1,28 +1,17 @@
 'use client';
 
-import { Suspense, useState } from 'react';
-import { useUser } from '@stackframe/stack';
+import { Suspense, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { authClient } from '@/lib/auth-client';
 import './page.css';
 
-function isClientAuthConfigured() {
-    const projectId = process.env.NEXT_PUBLIC_STACK_PROJECT_ID;
-    return Boolean(projectId && projectId !== '123e4567-e89b-42d3-a456-426614174000');
-}
-
-function AuthUnavailable() {
-    return (
-        <div className="profile-container">
-            <h1 className="page-title">會員功能暫時無法使用</h1>
-            <p>會員資料功能正在整理中，請稍後再試。</p>
-        </div>
-    );
-}
-
 function ProfileEditContent() {
-    const user = useUser({ or: 'redirect' });
+    const router = useRouter();
+    const session = authClient.useSession();
+    const user = session.data?.user;
     const [formData, setFormData] = useState({
-        email: user.primaryEmail || '',
-        nickname: user.displayName || '邀請碼達人',
+        email: user?.email || '',
+        nickname: user?.name || '邀請碼達人',
         phone: '0912345678',
         birthday: '1990-01-01',
         gender: 'female',
@@ -41,6 +30,25 @@ function ProfileEditContent() {
     });
 
     const [alert, setAlert] = useState({ message: '', type: '' });
+
+    useEffect(() => {
+        if (!session.isPending && !user) {
+            router.replace('/auth/login');
+        }
+    }, [router, session.isPending, user]);
+
+    useEffect(() => {
+        if (!user) return;
+        setFormData((prev) => ({
+            ...prev,
+            email: user.email || '',
+            nickname: user.name || prev.nickname,
+        }));
+    }, [user]);
+
+    if (session.isPending || !user) {
+        return null;
+    }
 
     // Handle form input changes
     const handleInputChange = (e) => {
@@ -416,10 +424,6 @@ function ProfileEditContent() {
 }
 
 export default function ProfileEditPage() {
-    if (!isClientAuthConfigured()) {
-        return <AuthUnavailable />;
-    }
-
     return (
         <Suspense fallback={null}>
             <ProfileEditContent />

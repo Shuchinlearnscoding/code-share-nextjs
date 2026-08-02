@@ -3,10 +3,12 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { usePathname } from 'next/navigation'
-import { UserButton, useUser } from '@stackframe/stack'
+import { UserButton } from '@neondatabase/auth-ui'
+import { authClient } from '@/lib/auth-client'
 
 function AuthButtons() {
-  const user = useUser()
+  const session = authClient.useSession()
+  const user = session.data?.user
 
   if (user) {
     return (
@@ -18,30 +20,17 @@ function AuthButtons() {
 
   return (
     <div className="auth-buttons">
-      <Link href="/handler/sign-in" className="btn-login">
+      <Link href="/auth/login" className="btn-login">
         登入
       </Link>
-      <Link href="/handler/sign-up" className="btn-register">
+      <Link href="/auth/signup" className="btn-register">
         註冊
       </Link>
     </div>
   )
 }
 
-function AuthSetupButtons() {
-  return (
-    <div className="auth-buttons">
-      <Link href="/handler/sign-in" className="btn-login">
-        登入
-      </Link>
-      <Link href="/handler/sign-up" className="btn-register">
-        註冊
-      </Link>
-    </div>
-  )
-}
-
-export default function Header({ authEnabled = false }) {
+export default function Header() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const pathname = usePathname()
 
@@ -95,7 +84,7 @@ export default function Header({ authEnabled = false }) {
             </li>
           </ul>
           
-          {authEnabled ? <AuthButtons /> : <AuthSetupButtons />}
+          <AuthButtons />
         </nav>
       </div>
     </header>
