@@ -4,10 +4,12 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { NeonAuthUIProvider } from '@neondatabase/auth-ui';
 import { authClient } from '@/lib/auth-client';
-import { neonAuthLocalizationZhTW } from '@/lib/neonAuthLocalization';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
+import { getNeonAuthLocalization } from '@/lib/neonAuthLocalization';
 
 export default function Providers({ children }) {
   const router = useRouter();
+  const { lang } = useLanguage();
 
   return (
     <NeonAuthUIProvider
@@ -16,7 +18,8 @@ export default function Providers({ children }) {
       replace={router.replace}
       onSessionChange={() => router.refresh()}
       redirectTo="/"
-      localization={neonAuthLocalizationZhTW}
+      social={{ providers: ['google'] }}
+      localization={getNeonAuthLocalization(lang)}
       viewPaths={{
         SIGN_IN: 'login',
         SIGN_UP: 'signup',

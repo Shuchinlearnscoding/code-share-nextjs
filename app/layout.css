@@ -186,6 +186,117 @@ body::before {
     gap: 15px;
 }
 
+.oauth-panel {
+    background: white;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    box-shadow: 0 14px 36px rgba(2, 48, 71, 0.09);
+    margin-bottom: 16px;
+    padding: 20px;
+}
+
+.oauth-divider {
+    align-items: center;
+    color: var(--color-muted);
+    display: flex;
+    font-size: 14px;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.oauth-divider::before,
+.oauth-divider::after {
+    background: var(--color-border);
+    content: '';
+    flex: 1;
+    height: 1px;
+}
+
+.oauth-buttons {
+    display: grid;
+    gap: 10px;
+}
+
+.oauth-button {
+    align-items: center;
+    background: #fff;
+    border: 1px solid #d7e7eb;
+    border-radius: 8px;
+    color: var(--color-text);
+    cursor: pointer;
+    display: flex;
+    font-size: 15px;
+    font-weight: 600;
+    gap: 10px;
+    justify-content: center;
+    min-height: 44px;
+    padding: 10px 14px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+    width: 100%;
+}
+
+.oauth-button:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 8px 20px rgba(2, 48, 71, 0.08);
+    transform: translateY(-1px);
+}
+
+.oauth-button:disabled {
+    cursor: wait;
+    opacity: 0.65;
+    transform: none;
+}
+
+.oauth-button svg {
+    height: 20px;
+    width: 20px;
+}
+
+/* The oauth-button is used by GoogleLoginButton for a site-styled Google sign-in.
+   Social providers inside AuthView are hidden via classNames prop. */
+
+/* Override AuthView social provider buttons to match site design */
+.site-oauth-button {
+    background: #fff !important;
+    border: 1px solid #d7e7eb !important;
+    border-radius: 8px !important;
+    color: var(--color-text) !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    gap: 10px !important;
+    min-height: 44px !important;
+    padding: 10px 14px !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease !important;
+    width: 100% !important;
+}
+
+.site-oauth-button:hover {
+    border-color: var(--color-primary) !important;
+    box-shadow: 0 8px 20px rgba(2, 48, 71, 0.08) !important;
+    transform: translateY(-1px) !important;
+    background: #fff !important;
+}
+
+.site-oauth-button:disabled {
+    cursor: wait !important;
+    opacity: 0.65 !important;
+    transform: none !important;
+}
+
+.site-oauth-button svg {
+    height: 20px !important;
+    width: 20px !important;
+}
+
+/* Hide the LINE provider button if it appears — target by text content isn't possible with CSS alone,
+   but LINE uses generic OAuth2, not social. If it shows, it'll receive the same site styling. */
+.oauth-error {
+    color: #c53030;
+    font-size: 13px;
+    margin-top: 10px;
+    text-align: center;
+}
+
 /* Mobile Hamburger Toggle */
 .mobile-menu-toggle {
     display: none;
