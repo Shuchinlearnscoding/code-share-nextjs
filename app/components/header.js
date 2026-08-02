@@ -17,7 +17,9 @@ function AuthButtons({ mobile = false, t }) {
   if (user) {
     return (
       <div className={className}>
-        <UserButton />
+        {/* disableDefaultLinks hides the built-in Settings item, which points at
+            an account view path this app has no route for (404). Sign out stays. */}
+        <UserButton disableDefaultLinks />
       </div>
     )
   }

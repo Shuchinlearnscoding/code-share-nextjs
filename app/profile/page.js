@@ -3,7 +3,17 @@
 import { Suspense, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { authClient } from '@/lib/auth-client';
+import { fetchUserReferralStats } from '@/lib/referralApi';
 import './page.css';
+
+// Better Auth returns the provider under `providerId`; older payloads use `provider`.
+function providerIdOf(account) {
+    return account.providerId ?? account.provider;
+}
+
+function statValue(value) {
+    return typeof value === 'number' ? value : '–';
+}
 
 function ProfileEditContent() {
     const router = useRouter();
@@ -24,10 +34,9 @@ function ProfileEditContent() {
         showProfile: false
     });
 
-    const [socialConnections, setSocialConnections] = useState({
-        google: true,
-        line: false
-    });
+    const [stats, setStats] = useState(null);
+    const [linkedProviders, setLinkedProviders] = useState(null);
+    const [linkingProvider, setLinkingProvider] = useState(null);
 
     const [alert, setAlert] = useState({ message: '', type: '' });
 
@@ -44,6 +53,42 @@ function ProfileEditContent() {
             email: user.email || '',
             nickname: user.name || prev.nickname,
         }));
+    }, [user]);
+
+    useEffect(() => {
+        if (!user) return;
+        let cancelled = false;
+
+        fetchUserReferralStats()
+            .then(({ stats: userStats }) => {
+                if (!cancelled) setStats(userStats);
+            })
+            .catch(() => {
+                if (!cancelled) setStats(null);
+            });
+
+        return () => {
+            cancelled = true;
+        };
+    }, [user]);
+
+    useEffect(() => {
+        if (!user) return;
+        let cancelled = false;
+
+        authClient
+            .listAccounts()
+            .then(({ data }) => {
+                if (cancelled) return;
+                setLinkedProviders(data ? data.map(providerIdOf) : null);
+            })
+            .catch(() => {
+                if (!cancelled) setLinkedProviders(null);
+            });
+
+        return () => {
+            cancelled = true;
+        };
     }, [user]);
 
     if (session.isPending || !user) {
@@ -125,24 +170,18 @@ function ProfileEditContent() {
         }, 1500);
     };
 
-    // Handle social account binding
-    const handleSocialBinding = (platform) => {
-        setSocialConnections(prev => {
-            const isConnected = prev[platform];
-            
-            if (isConnected) {
-                // Unbind
-                if (confirm('確定要解除綁定嗎？')) {
-                    showAlert('社交帳號已解除綁定', 'info');
-                    return { ...prev, [platform]: false };
-                }
-                return prev;
-            } else {
-                // Bind
-                showAlert('社交帳號綁定成功！', 'success');
-                return { ...prev, [platform]: true };
-            }
-        });
+    // Starts the real OAuth link flow; the browser leaves the page and comes back.
+    const handleSocialBinding = async (provider) => {
+        setLinkingProvider(provider);
+
+        const { error } = await authClient
+            .linkSocial({ provider, callbackURL: '/profile' })
+            .catch((err) => ({ error: err }));
+
+        if (error) {
+            setLinkingProvider(null);
+            showAlert(error.message || '綁定失敗，請稍後再試。', 'warning');
+        }
     };
 
     // Handle account deletion
@@ -170,19 +209,19 @@ function ProfileEditContent() {
                 <h3 className="section-title">我的統計</h3>
                 <div className="stats-grid">
                     <div className="stat-item">
-                        <div className="stat-number">5</div>
+                        <div className="stat-number">{statValue(stats?.codeCount)}</div>
                         <div className="stat-label">已提供邀請碼</div>
                     </div>
                     <div className="stat-item">
-                        <div className="stat-number">127</div>
+                        <div className="stat-number">{statValue(stats?.usageCount)}</div>
                         <div className="stat-label">總使用次數</div>
                     </div>
                     <div className="stat-item">
-                        <div className="stat-number">2</div>
+                        <div className="stat-number">{statValue(stats?.reportCount)}</div>
                         <div className="stat-label">被檢舉次數</div>
                     </div>
                     <div className="stat-item">
-                        <div className="stat-number">3</div>
+                        <div className="stat-number">{statValue(stats?.platformCount)}</div>
                         <div className="stat-label">涵蓋平台數</div>
                     </div>
                 </div>
@@ -286,22 +325,28 @@ function ProfileEditContent() {
                     <h3 className="section-title">社交帳號綁定</h3>
                     <div className="social-login-section">
                         <div className="social-buttons">
-                            <button 
-                                type="button"
-                                className={`social-btn google ${socialConnections.google ? 'connected' : ''}`}
-                                onClick={() => handleSocialBinding('google')}
-                            >
-                                <span className="social-icon">🟡</span>
-                                Google {socialConnections.google ? '已綁定' : '綁定'}
-                            </button>
-                            <button 
-                                type="button"
-                                className={`social-btn line ${socialConnections.line ? 'connected' : ''}`}
-                                onClick={() => handleSocialBinding('line')}
-                            >
-                                <span className="social-icon">🟢</span>
-                                {socialConnections.line ? 'LINE 已綁定' : '綁定 LINE'}
-                            </button>
+                            {(() => {
+                                const isLinked = linkedProviders?.includes('google');
+                                const isLoading = linkedProviders === null;
+
+                                return (
+                                    <button
+                                        type="button"
+                                        className={`social-btn google ${isLinked ? 'connected' : ''}`}
+                                        onClick={() => handleSocialBinding('google')}
+                                        disabled={isLoading || isLinked || linkingProvider === 'google'}
+                                    >
+                                        <span className="social-icon">🟡</span>
+                                        {isLoading
+                                            ? 'Google 讀取中…'
+                                            : isLinked
+                                              ? 'Google 已綁定'
+                                              : linkingProvider === 'google'
+                                                ? 'Google 綁定中…'
+                                                : '綁定 Google'}
+                                    </button>
+                                );
+                            })()}
                         </div>
                     </div>
                 </div>

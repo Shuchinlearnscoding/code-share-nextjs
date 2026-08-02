@@ -181,19 +181,21 @@ h1 {
     color: white;
 }
 
-.social-btn.line {
-    border-color: #00b900;
-}
-
-.social-btn.line:hover {
-    background: #00b900;
-    color: white;
-}
-
 .social-btn.connected {
     background: #d4edda;
     border-color: #0077A0;
     color: #155724;
+}
+
+/* Already bound, or still loading — greyed out and inert. */
+.social-btn:disabled,
+.social-btn:disabled:hover {
+    background: #f1f1f1;
+    border-color: #d5d5d5;
+    color: #6c757d;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
 .social-icon {
