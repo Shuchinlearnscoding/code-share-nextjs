@@ -15,7 +15,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="zh-TW">
+    <html lang="zh-TW" suppressHydrationWarning>
       <body>
         <Providers>
           <Suspense fallback={<div className="header-placeholder" />}>

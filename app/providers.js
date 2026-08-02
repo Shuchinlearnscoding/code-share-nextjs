@@ -14,13 +14,13 @@ export default function Providers({ children }) {
       navigate={router.push}
       replace={router.replace}
       onSessionChange={() => router.refresh()}
-          redirectTo="/"
-          viewPaths={{
-            SIGN_IN: 'login',
-            SIGN_UP: 'signup',
-          }}
-          Link={Link}
-        >
+      redirectTo="/"
+      viewPaths={{
+        SIGN_IN: 'login',
+        SIGN_UP: 'signup',
+      }}
+      Link={Link}
+    >
       {children}
     </NeonAuthUIProvider>
   );
