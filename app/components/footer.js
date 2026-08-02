@@ -1,7 +1,13 @@
+'use client';
+
+import { useLanguage } from '../../lib/i18n/LanguageContext'
+
 export default function Footer() {
+  const { t } = useLanguage()
+
   return (
     <footer className="footer">
-      <p>&copy; 2025 邀請碼大全. All rights reserved.</p>
+      <p>{t('footer.copyright')}</p>
     </footer>
   )
 }

@@ -1,4 +1,4 @@
-﻿/* 關於我們 CSS - aboutpage.css */
+/* 關於我們 CSS - aboutpage.css */
 
 .about-container {
     max-width: 900px;
@@ -7,22 +7,54 @@
 }
 
 .hero-section {
+    position: relative;
+    overflow: hidden;
     text-align: center;
-    padding: 60px 0 40px;
+    padding: 70px 30px 50px;
+    margin-bottom: 20px;
+    border-radius: 20px;
     color: white;
+    background: linear-gradient(135deg, #005C7A 0%, #0077A0 60%, #1E8FB8 100%);
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: -70px;
+    right: -50px;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    z-index: 0;
+}
+
+.hero-section::after {
+    content: '';
+    position: absolute;
+    bottom: -60px;
+    left: -40px;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: rgba(255, 183, 3, 0.2);
+    z-index: 0;
 }
 
 .hero-title {
+    position: relative;
+    z-index: 1;
     font-size: 48px;
     font-weight: bold;
     margin-bottom: 20px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .hero-subtitle {
+    position: relative;
+    z-index: 1;
     font-size: 20px;
-    margin-bottom: 40px;
-    opacity: 0.9;
+    margin-bottom: 0;
+    opacity: 0.92;
     line-height: 1.6;
 }
 
@@ -32,6 +64,130 @@
     padding: 50px;
     margin: 20px 0;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* 蜂巢命名故事 */
+.bee-story-section {
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    background: linear-gradient(135deg, #FFF6DE 0%, #FFE9AE 100%);
+    border-radius: 20px;
+    padding: 50px 30px;
+    margin-bottom: 20px;
+}
+
+.bee-story-hex {
+    position: absolute;
+    clip-path: polygon(25% 6.7%, 75% 6.7%, 100% 50%, 75% 93.3%, 25% 93.3%, 0% 50%);
+    z-index: 0;
+}
+
+.hex-1 {
+    width: 140px;
+    height: 140px;
+    top: -30px;
+    left: -30px;
+    background: rgba(255, 183, 3, 0.18);
+}
+
+.hex-2 {
+    width: 90px;
+    height: 90px;
+    bottom: -20px;
+    right: 40px;
+    background: rgba(0, 119, 160, 0.12);
+}
+
+.hex-3 {
+    width: 56px;
+    height: 56px;
+    top: 30px;
+    right: 90px;
+    background: rgba(255, 183, 3, 0.28);
+}
+
+.bee-icon-badge {
+    position: relative;
+    z-index: 1;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: #FFB703;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    margin: 0 auto 18px;
+    box-shadow: 0 8px 20px rgba(255, 183, 3, 0.35);
+}
+
+.bee-story-title {
+    position: relative;
+    z-index: 1;
+    font-size: 24px;
+    font-weight: bold;
+    color: #6b4a00;
+    margin-bottom: 14px;
+}
+
+.bee-story-body {
+    position: relative;
+    z-index: 1;
+    font-size: 16px;
+    line-height: 1.8;
+    color: #7a5c14;
+    max-width: 640px;
+    margin: 0 auto;
+}
+
+.family-badge-section {
+    text-align: center;
+    background: linear-gradient(180deg, #EAF8FC 0%, #ffffff 100%);
+    border-radius: 20px;
+    padding: 44px 30px;
+    margin: 0 0 20px;
+}
+
+.family-badge-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #FFB703;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+}
+
+.family-badge-title {
+    font-size: 26px;
+    font-weight: bold;
+    color: #023047;
+    margin-bottom: 10px;
+}
+
+.family-badge-desc {
+    font-size: 16px;
+    color: #4d6b74;
+    margin-bottom: 22px;
+}
+
+.family-badge-cta {
+    display: inline-block;
+    background: #0091AD;
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 12px 32px;
+    border-radius: 24px;
+    text-decoration: none;
+    transition: filter 0.2s ease, transform 0.2s ease;
+}
+
+.family-badge-cta:hover {
+    filter: brightness(1.08);
+    transform: translateY(-2px);
 }
 
 .section-title {
@@ -51,7 +207,7 @@
     transform: translateX(-50%);
     width: 60px;
     height: 4px;
-    background: linear-gradient(45deg, #0284c7, #075985);
+    background: linear-gradient(45deg, #00B4D8, #0091AD);
     border-radius: 2px;
 }
 
@@ -72,7 +228,7 @@
 }
 
 .highlight-text {
-    color: #0284c7;
+    color: #00B4D8;
     font-weight: 600;
 }
 
@@ -94,6 +250,10 @@
 }
 
 .logo-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
     background: white;
     padding: 30px;
     border-radius: 15px;
@@ -103,20 +263,6 @@
 
 .logo-item:hover {
     transform: translateY(-5px);
-}
-
-.logo-image {
-    width: 100px;
-    height: 100px;
-    background: linear-gradient(45deg, #0284c7, #075985);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 36px;
-    color: white;
-    font-weight: bold;
-    margin: 0 auto 15px;
 }
 
 .logo-description {
@@ -142,13 +288,13 @@
 
 .feature-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(2, 132, 199, 0.15);
+    box-shadow: 0 10px 25px rgba(0, 145, 173, 0.15);
 }
 
 .feature-icon {
     width: 60px;
     height: 60px;
-    background: linear-gradient(45deg, #0284c7, #075985);
+    background: linear-gradient(45deg, #00B4D8, #0091AD);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -172,7 +318,7 @@
 }
 
 .stats-section {
-    background: linear-gradient(45deg, #0284c7, #075985);
+    background: linear-gradient(45deg, #0077A0, #005C7A);
     color: white;
     border-radius: 20px;
     padding: 40px;
@@ -203,7 +349,6 @@
     font-size: 36px;
     font-weight: bold;
     margin-bottom: 10px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .stat-label {
@@ -237,7 +382,7 @@
 .member-avatar {
     width: 80px;
     height: 80px;
-    background: linear-gradient(45deg, #0284c7, #075985);
+    background: linear-gradient(45deg, #0077A0, #005C7A);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -257,7 +402,7 @@
 
 .member-role {
     font-size: 14px;
-    color: #0284c7;
+    color: #0077A0;
     font-weight: 500;
     margin-bottom: 15px;
 }
@@ -301,7 +446,7 @@
 .contact-icon {
     width: 50px;
     height: 50px;
-    background: linear-gradient(45deg, #0284c7, #075985);
+    background: linear-gradient(45deg, #00B4D8, #0091AD);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -317,18 +462,18 @@
 }
 
 .contact-link {
-    color: #0284c7;
+    color: #0077A0;
     text-decoration: none;
     transition: color 0.3s ease;
 }
 
 .contact-link:hover {
-    color: #075985;
+    color: #005C7A;
     text-decoration: underline;
 }
 
 .vision-section {
-    background: linear-gradient(135deg, #0284c7 0%, #075985 100%);
+    background: linear-gradient(135deg, #0077A0 0%, #005C7A 100%);
     color: white;
     padding: 50px;
     border-radius: 20px;
@@ -340,7 +485,6 @@
     font-size: 28px;
     font-weight: bold;
     margin-bottom: 25px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .vision-content {
@@ -369,6 +513,14 @@
         padding: 30px 20px;
         margin: 15px 0;
     }
+
+    .family-badge-section {
+        padding: 30px 20px;
+    }
+
+    .family-badge-title {
+        font-size: 21px;
+    }
     
     .section-title {
         font-size: 24px;
@@ -390,13 +542,7 @@
     .logo-item {
         padding: 20px;
     }
-    
-    .logo-image {
-        width: 80px;
-        height: 80px;
-        font-size: 28px;
-    }
-    
+
     .stats-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 20px;
