@@ -30,6 +30,9 @@ export default function ManageCodePage() {
     });
 
     const [reportRecords, setReportRecords] = useState({});
+    const [inviteCodes, setInviteCodes] = useState([]);
+    const [isLoadingCodes, setIsLoadingCodes] = useState(true);
+    const [platforms, setPlatforms] = useState([]);
 
     useEffect(() => {
         if (!session.isPending && !session.data?.user) {
@@ -42,63 +45,65 @@ export default function ManageCodePage() {
         setReportRecords(getAllReports());
     }, [session.data?.user]);
 
-    const MOCK_CODES = [
-        {
-            id: 'fp123abc',
-            platform: 'Foodpanda',
-            code: 'FP123ABC',
-            status: 'active',
-            usageCount: 45,
-            daysCreated: 7,
-            lastUsed: '今天'
-        },
-        {
-            id: 'ub789xyz',
-            platform: 'Uber',
-            code: 'UB789XYZ',
-            status: 'active',
-            usageCount: 32,
-            daysCreated: 12,
-            lastUsed: '2天前'
-        },
-        {
-            id: 'lp2024a1',
-            platform: 'Line Pay',
-            code: 'LP2024A1',
-            status: 'active',
-            usageCount: 8,
-            daysCreated: 5,
-            lastUsed: '4天前'
-        },
-        {
-            id: 'jk001122',
-            platform: '街口支付',
-            code: 'JK001122',
-            status: 'inactive',
-            usageCount: 23,
-            daysCreated: 20,
-            lastUsed: '10天前'
-        },
-        {
-            id: 'ec24aa11',
-            platform: '環保集點',
-            code: 'EC24AA11',
-            status: 'active',
-            usageCount: 19,
-            daysCreated: 15,
-            lastUsed: '1天前'
-        }
-    ];
+    useEffect(() => {
+        fetch('/api/referrals/platforms')
+            .then((res) => (res.ok ? res.json() : { platforms: [] }))
+            .then((data) => setPlatforms(data.platforms || []))
+            .catch(() => setPlatforms([]));
+    }, []);
 
-    const codes = MOCK_CODES.map((c) => {
+    const formatDaysCreated = (createdAt, now) => {
+        if (!createdAt) return 0;
+        const diffMs = now - new Date(createdAt).getTime();
+        return Math.max(0, Math.floor(diffMs / (1000 * 60 * 60 * 24)));
+    };
+
+    const formatLastUsed = (lastUsedAt) => {
+        if (!lastUsedAt) return t('manageCode.info.notUsedYet');
+        return new Date(lastUsedAt).toLocaleDateString('zh-TW');
+    };
+
+    const withDisplayFields = (c) => ({
+        ...c,
+        daysCreated: formatDaysCreated(c.createdAt, Date.now()),
+        lastUsedDisplay: formatLastUsed(c.lastUsedAt),
+    });
+
+    const loadInviteCodes = async () => {
+        setIsLoadingCodes(true);
+        try {
+            const res = await fetch('/api/referrals/mine');
+            if (!res.ok) throw new Error('failed to load');
+            const data = await res.json();
+            setInviteCodes((data.inviteCodes || []).map(withDisplayFields));
+        } catch {
+            showAlert(t('manageCode.alerts.loadError'), 'error');
+        } finally {
+            setIsLoadingCodes(false);
+        }
+    };
+
+    useEffect(() => {
+        if (!session.data?.user) return;
+        loadInviteCodes();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [session.data?.user]);
+
+    const codes = inviteCodes.map((c) => {
         const reports = reportRecords[c.id] || [];
         const reportCount = reports.length;
         const suspended = reportCount >= 5;
         return {
-            ...c,
+            id: c.id,
+            platform: c.platform,
+            code: c.code,
+            status: suspended ? 'suspended' : c.status,
+            usageCount: c.usageCount,
+            daysCreated: c.daysCreated,
+            lastUsed: c.lastUsedDisplay,
+            expiresAt: c.expiresAt,
             reportCount,
             reports,
-            status: suspended ? 'suspended' : c.status,
         };
     });
 
@@ -172,7 +177,7 @@ export default function ManageCodePage() {
             customPlatform: '',
             inviteCode: target.code,
             description: '',
-            expiryDate: ''
+            expiryDate: target.expiresAt ? target.expiresAt.slice(0, 10) : ''
         });
         setShowCustomPlatform(false);
         setShowModal(true);
@@ -188,20 +193,40 @@ export default function ManageCodePage() {
     };
 
     // Toggle code status
-    const toggleCode = (codeId) => {
+    const toggleCode = async (codeId) => {
         const code = codes.find(c => c.id === codeId);
         const isActive = code?.status === 'active';
         const confirmMsg = isActive ? t('manageCode.alerts.confirmDeactivate') : t('manageCode.alerts.confirmReactivate');
 
-        if (confirm(confirmMsg)) {
+        if (!confirm(confirmMsg)) return;
+
+        const nextStatus = isActive ? 'inactive' : 'active';
+        try {
+            const res = await fetch(`/api/referrals/mine/${codeId}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: nextStatus }),
+            });
+            if (!res.ok) throw new Error('failed');
+            const data = await res.json();
+            setInviteCodes((prev) => prev.map((c) => (c.id === codeId ? withDisplayFields(data.inviteCode) : c)));
             showAlert(isActive ? t('manageCode.alerts.deactivated') : t('manageCode.alerts.reactivated'), 'success');
+        } catch {
+            showAlert(t('manageCode.alerts.actionError'), 'error');
         }
     };
 
     // Delete code
-    const deleteCode = (codeId) => {
-        if (confirm(t('manageCode.alerts.confirmDelete'))) {
+    const deleteCode = async (codeId) => {
+        if (!confirm(t('manageCode.alerts.confirmDelete'))) return;
+
+        try {
+            const res = await fetch(`/api/referrals/mine/${codeId}`, { method: 'DELETE' });
+            if (!res.ok) throw new Error('failed');
+            setInviteCodes((prev) => prev.filter((c) => c.id !== codeId));
             showAlert(t('manageCode.alerts.deleted'), 'success');
+        } catch {
+            showAlert(t('manageCode.alerts.actionError'), 'error');
         }
     };
 
@@ -220,47 +245,53 @@ export default function ManageCodePage() {
         submitBtn.textContent = t('manageCode.modal.saving');
         submitBtn.disabled = true;
 
-        setTimeout(() => {
+        try {
             if (editingCodeId) {
+                const res = await fetch(`/api/referrals/mine/${editingCodeId}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        code: formData.inviteCode,
+                        expiresAt: formData.expiryDate || null,
+                    }),
+                });
+                if (!res.ok) throw new Error('failed');
+                const data = await res.json();
+                setInviteCodes((prev) => prev.map((c) => (c.id === editingCodeId ? withDisplayFields(data.inviteCode) : c)));
+
                 const target = codes.find((c) => c.id === editingCodeId);
                 if (target?.status === 'suspended') {
                     confirmStillValid(editingCodeId);
                 }
                 showAlert(t('manageCode.alerts.updatedSuccess'), 'success');
             } else {
+                const isCustomPlatform = formData.platform === 'other';
+                const res = await fetch('/api/referrals/mine', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        platformId: isCustomPlatform ? null : formData.platform,
+                        platformName: isCustomPlatform ? formData.customPlatform : null,
+                        code: formData.inviteCode,
+                        expiresAt: formData.expiryDate || null,
+                    }),
+                });
+                if (!res.ok) {
+                    const err = await res.json().catch(() => null);
+                    throw new Error(err?.message || 'failed');
+                }
+                const data = await res.json();
+                setInviteCodes((prev) => [withDisplayFields(data.inviteCode), ...prev]);
                 showAlert(t('manageCode.alerts.addedSuccess'), 'success');
             }
 
             closeModal();
+        } catch (err) {
+            showAlert(err.message && err.message !== 'failed' ? err.message : t('manageCode.alerts.actionError'), 'error');
+        } finally {
             submitBtn.textContent = originalText;
             submitBtn.disabled = false;
-        }, 1000);
-    };
-
-    // Show alert message
-    const showAlert = (message, type) => {
-        // Create alert element
-        const alert = document.createElement('div');
-        alert.className = `alert ${type}`;
-        alert.style.cssText = `
-            position: fixed;
-            top: 100px;
-            right: 20px;
-            background: ${type === 'success' ? '#d4edda' : type === 'error' ? '#f8d7da' : '#d1ecf1'};
-            color: ${type === 'success' ? '#155724' : type === 'error' ? '#721c24' : '#0c5460'};
-            padding: 15px 20px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            z-index: 9999;
-            font-weight: 500;
-        `;
-        alert.textContent = message;
-        
-        document.body.appendChild(alert);
-        
-        setTimeout(() => {
-            alert.remove();
-        }, 3000);
+        }
     };
 
     // Handle modal click outside
@@ -420,6 +451,12 @@ export default function ManageCodePage() {
 
             {/* 邀請碼列表 */}
             <div className="codes-list">
+                {isLoadingCodes && (
+                    <div className="empty-state">{t('manageCode.loading')}</div>
+                )}
+                {!isLoadingCodes && codes.length === 0 && (
+                    <div className="empty-state">{t('manageCode.emptyState')}</div>
+                )}
                 {codes.map((code) => (
                     <div key={code.id} className={`code-card ${code.status === 'inactive' ? 'inactive' : ''} ${code.status === 'reported' ? 'reported' : ''} ${code.status === 'suspended' ? 'reported' : ''}`}>
                         <div className="code-header">
@@ -531,14 +568,18 @@ export default function ManageCodePage() {
                                         required
                                     >
                                         <option value="">{t('manageCode.modal.platformPlaceholder')}</option>
-                                        <option value="Foodpanda">Foodpanda</option>
-                                        <option value="Uber">Uber</option>
-                                        <option value="Ubereats">Uber Eats</option>
-                                        <option value="街口支付">街口支付</option>
-                                        <option value="悠遊付">悠遊付</option>
-                                        <option value="環保集點">環保集點</option>
-                                        <option value="蝦皮購物">蝦皮購物</option>
-                                        <option value="Agoda">Agoda</option>
+                                        {Object.entries(
+                                            platforms.reduce((groups, p) => {
+                                                (groups[p.categoryName] ||= []).push(p);
+                                                return groups;
+                                            }, {})
+                                        ).map(([categoryName, platformsInCategory]) => (
+                                            <optgroup key={categoryName} label={categoryName}>
+                                                {platformsInCategory.map((p) => (
+                                                    <option key={p.id} value={p.id}>{p.name}</option>
+                                                ))}
+                                            </optgroup>
+                                        ))}
                                         <option value="other">{t('manageCode.modal.other')}</option>
                                     </select>
                                     <div className="form-help">{t('manageCode.modal.platformHelp')}</div>

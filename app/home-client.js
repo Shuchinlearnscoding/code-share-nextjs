@@ -96,8 +96,9 @@ export default function HomeClient({ initialPlatforms = [] }) {
                 setExcludeIds(newExcludeIds);
                 const retry = await fetchReferralMatch({ platformId, query, excludeIds: newExcludeIds }).catch(() => null);
                 if (!retry) {
+                    setCurrentInviteCode(null);
                     setNoMoreCodes(true);
-                    setShowResult(false);
+                    displayResult();
                     setIsLoading(false);
                     return;
                 }
@@ -109,8 +110,8 @@ export default function HomeClient({ initialPlatforms = [] }) {
             displayResult();
         } catch (error) {
             setCurrentInviteCode(null);
-            setShowResult(false);
             setNoMoreCodes(true);
+            displayResult();
         } finally {
             setIsLoading(false);
         }
@@ -229,8 +230,8 @@ export default function HomeClient({ initialPlatforms = [] }) {
             displayResult();
         } catch {
             setCurrentInviteCode(null);
-            setShowResult(false);
             setNoMoreCodes(true);
+            displayResult();
         }
     };
 
