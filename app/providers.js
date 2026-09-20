@@ -14,6 +14,7 @@ export default function Providers({ children }) {
   return (
     <NeonAuthUIProvider
       authClient={authClient}
+      defaultTheme="light"
       navigate={router.push}
       replace={router.replace}
       onSessionChange={() => router.refresh()}
