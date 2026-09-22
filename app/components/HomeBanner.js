@@ -7,10 +7,10 @@ import { authClient } from '@/lib/auth-client';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import './HomeBanner.css';
 
-const slides = [
-    { id: 1, type: 'avatar-wall', href: '/auth/signup' },
-    { id: 2, type: 'community', href: '/' },
-    { id: 3, type: 'member-card', href: '/manageCode' },
+const FALLBACK_SLIDES = [
+    { id: 'fallback-1', type: 'avatar-wall', href: '/auth/signup' },
+    { id: 'fallback-2', type: 'community', href: '/' },
+    { id: 'fallback-3', type: 'member-card', href: '/manageCode' },
 ];
 
 const AUTOPLAY_MS = 5000;
@@ -94,13 +94,34 @@ function SlideContent({ type, t }) {
     );
 }
 
-export default function HomeBanner() {
+function ImageSlideContent({ slide }) {
+    return (
+        <div className="hb-slide hb-image-slide">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={slide.imageUrl} alt={slide.title || ''} className="hb-image" loading="lazy" />
+            {(slide.title || slide.subtitle) && (
+                <div className="hb-image-caption">
+                    {slide.title && <h3>{slide.title}</h3>}
+                    {slide.subtitle && <p>{slide.subtitle}</p>}
+                </div>
+            )}
+        </div>
+    );
+}
+
+export default function HomeBanner({ slides: dbSlides = [], preview = false }) {
     const router = useRouter();
     const session = authClient.useSession();
     const { t } = useLanguage();
     const [activeIndex, setActiveIndex] = useState(0);
     const timerRef = useRef(null);
     const dragStartX = useRef(null);
+
+    const slides = dbSlides.length > 0
+        ? dbSlides.map((slide) => ({ id: slide.id, href: slide.linkHref || '#', imageSlide: slide }))
+        : FALLBACK_SLIDES;
+
+    const currentIndex = ((activeIndex % slides.length) + slides.length) % slides.length;
 
     const goTo = (index) => {
         const total = slides.length;
@@ -117,7 +138,7 @@ export default function HomeBanner() {
     useEffect(() => {
         startAutoplay();
         return () => clearInterval(timerRef.current);
-    }, []);
+    }, [slides.length]);
 
     const handleDragStart = (clientX) => {
         dragStartX.current = clientX;
@@ -149,7 +170,7 @@ export default function HomeBanner() {
         >
             <div
                 className="home-banner-track"
-                style={{ transform: `translateX(-${activeIndex * 100}%)` }}
+                style={{ transform: `translateX(-${currentIndex * 100}%)` }}
             >
                 {slides.map((slide) => (
                     <Link
@@ -157,13 +178,19 @@ export default function HomeBanner() {
                         key={slide.id}
                         className="home-banner-slide"
                         onClick={(e) => {
+                            if (preview) {
+                                e.preventDefault();
+                                return;
+                            }
                             if (slide.type === 'member-card' && !session.data?.user) {
                                 e.preventDefault();
                                 router.push('/auth/login');
                             }
                         }}
                     >
-                        <SlideContent type={slide.type} t={t} />
+                        {slide.imageSlide
+                            ? <ImageSlideContent slide={slide.imageSlide} />
+                            : <SlideContent type={slide.type} t={t} />}
                     </Link>
                 ))}
             </div>
@@ -196,7 +223,7 @@ export default function HomeBanner() {
                     <button
                         type="button"
                         key={slide.id}
-                        className={`home-banner-dot ${index === activeIndex ? 'active' : ''}`}
+                        className={`home-banner-dot ${index === currentIndex ? 'active' : ''}`}
                         aria-label={`前往第 ${index + 1} 張`}
                         onClick={() => {
                             goTo(index);

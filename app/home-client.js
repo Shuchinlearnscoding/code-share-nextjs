@@ -32,7 +32,7 @@ function getDisplayValue(inviteCode, t) {
     return inviteCode.code || t('home.referralLinkFallback');
 }
 
-export default function HomeClient({ initialPlatforms = [] }) {
+export default function HomeClient({ initialPlatforms = [], bannerSlides = [] }) {
     const { t } = useLanguage();
     const [searchInput, setSearchInput] = useState('');
     const [platforms] = useState(initialPlatforms);
@@ -264,7 +264,7 @@ export default function HomeClient({ initialPlatforms = [] }) {
 
     return (
         <div>
-            <HomeBanner />
+            <HomeBanner slides={bannerSlides} />
 
             <section className="search-section">
                 <h2 className="search-title">{t('home.searchTitle')}</h2>

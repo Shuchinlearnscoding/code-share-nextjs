@@ -70,6 +70,19 @@ create table if not exists referral_review_issues (
   created_at timestamptz not null default now()
 );
 
+create table if not exists home_banner_slides (
+  id text primary key,
+  image_url text not null,
+  link_href text,
+  title text,
+  subtitle text,
+  sort_order integer not null default 0,
+  is_active boolean not null default true,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists home_banner_slides_active_sort_idx on home_banner_slides(is_active, sort_order);
 create index if not exists referral_platforms_category_id_idx on referral_platforms(category_id);
 create index if not exists referral_platforms_status_idx on referral_platforms(status);
 create index if not exists referral_platforms_is_popular_idx on referral_platforms(is_popular);

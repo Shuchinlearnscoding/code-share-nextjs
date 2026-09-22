@@ -1,18 +1,29 @@
 import { redirect } from 'next/navigation';
-import { auth } from '@/lib/auth';
+import Link from 'next/link';
+import { getAdminUser } from '@/lib/adminAuth';
+import './admin.css';
 
 export const dynamic = 'force-dynamic';
 
 export default async function AdminPage() {
-  const { data: session } = await auth.getSession();
-  if (!session?.user) {
+  const admin = await getAdminUser();
+  if (!admin) {
     redirect('/auth/login');
   }
 
   return (
-    <div>
-      <h1>管理員後台</h1>
-      <p>請先完成管理員角色與審核流程後再開放操作。</p>
+    <div className="admin-container">
+      <h1 className="admin-title">管理員後台</h1>
+      <p className="admin-subtitle">已登入：{admin.email}</p>
+
+      <ul className="admin-nav-list">
+        <li>
+          <Link href="/admin/banner" className="admin-nav-card">
+            <span className="admin-nav-card-title">首頁輪播圖片管理</span>
+            <span className="admin-nav-card-desc">新增、編輯、排序、預覽首頁輪播圖片</span>
+          </Link>
+        </li>
+      </ul>
     </div>
   )
 }
